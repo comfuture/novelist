@@ -22,6 +22,7 @@ The canonical manuscript source is `chapters/`. Rendered output belongs in `publ
 - `outlines/`: novel, act, sequence, and chapter outlines.
 - `world/`: settings, locations, timelines, rules, institutions, and world-state continuity.
 - `style/`: voice, point of view, tense, prose conventions, recurring terms, and revision preferences.
+- `assets/`: project-bound cover and illustration image assets.
 - `chapters/`: actual chapter manuscript files, sorted by filename.
 - `published/`: generated render output only. Do not treat this as canonical source.
 - `.agents/skills/`: repository-scoped Agent Skills for repeatable novel-writing workflows.
@@ -130,7 +131,7 @@ Keep delegated tasks concrete and non-overlapping. Do not let multiple agents ed
 
 Project-specific reusable skills live in `.agents/skills/` so they are repository-scoped and portable to Codex-compatible Agent Skills tooling. Prefer this location over `.codex/skills` for checked-in project skills.
 
-Before handling repeatable novel-building work, check `.agents/skills/` for a matching local skill and use it when applicable. Prefer these project skills for creating or refining characters, settings, plots, materials, MacGuffins, outlines, style guides, and chapter-related source files.
+Before handling repeatable novel-building work, check `.agents/skills/` for a matching local skill and use it when applicable. Prefer these project skills for creating or refining characters, settings, plots, materials, MacGuffins, outlines, style guides, visual assets, EPUB builds, and chapter-related source files.
 
 ## Publishing Workflow
 
