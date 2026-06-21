@@ -1,6 +1,6 @@
 ---
 name: create-visual-asset
-description: Create cover and illustration image assets for the el_empiezo novel project using the built-in image generation workflow. Use when the user wants to plan, generate, refine, or save a book cover, chapter illustration, spot illustration, visual motif, or image prompt while preserving a consistent visual style across assets.
+description: Create cover and illustration image assets for this novel project using the built-in image generation workflow. Use when the user wants to plan, generate, refine, or save a book cover, chapter illustration, spot illustration, visual motif, or image prompt while preserving a consistent visual style across assets.
 ---
 
 # Create Visual Asset

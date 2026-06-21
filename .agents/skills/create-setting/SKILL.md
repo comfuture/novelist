@@ -1,6 +1,6 @@
 ---
 name: create-setting
-description: Create whole-novel setting and worldbuilding source files for the el_empiezo novel project. Use when the user wants to generate, refine, or save a novel setting, era, region, social order, locations, rules, atmosphere, constraints, or continuity facts into world/ as Markdown with YAML frontmatter.
+description: Create whole-novel setting and worldbuilding source files for this novel project. Use when the user wants to generate, refine, or save a novel setting, era, region, social order, locations, rules, atmosphere, constraints, or continuity facts into world/ as Markdown with YAML frontmatter.
 ---
 
 # Create Setting

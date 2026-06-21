@@ -1,6 +1,6 @@
 ---
 type: agent_instructions
-project: el-empiezo
+project: novel-project
 created: 2026-06-21
 updated: 2026-06-21
 ---

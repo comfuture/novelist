@@ -1,6 +1,6 @@
 ---
 name: create-material
-description: Create story material source files for the el_empiezo novel project. Use when the user wants to generate, refine, or save raw novel material such as motifs, objects, scene seeds, dialogue seeds, research notes, themes, images, conflicts, clues, or reusable ideas into materials/ as Markdown with YAML frontmatter.
+description: Create story material source files for this novel project. Use when the user wants to generate, refine, or save raw novel material such as motifs, objects, scene seeds, dialogue seeds, research notes, themes, images, conflicts, clues, or reusable ideas into materials/ as Markdown with YAML frontmatter.
 ---
 
 # Create Material

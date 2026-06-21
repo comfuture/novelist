@@ -1,6 +1,6 @@
 ---
 name: create-plot
-description: Create whole-novel plot and plot-thread source files for the el_empiezo novel project. Use when the user wants to generate, refine, structure, or save a central plot, act structure, promise, pressure, reversals, turns, reveals, or payoffs into plot/ as Markdown with YAML frontmatter.
+description: Create whole-novel plot and plot-thread source files for this novel project. Use when the user wants to generate, refine, structure, or save a central plot, act structure, promise, pressure, reversals, turns, reveals, or payoffs into plot/ as Markdown with YAML frontmatter.
 ---
 
 # Create Plot

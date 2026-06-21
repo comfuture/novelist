@@ -1,7 +1,7 @@
 ---
-id: el-empiezo
+id: novel-project
 type: project
-title: "El Empiezo"
+title: "Untitled Novel"
 language: ko
 genre: []
 status: seed
@@ -20,7 +20,7 @@ created: 2026-06-21
 updated: 2026-06-21
 tags: []
 ---
-# El Empiezo
+# Untitled Novel
 
 ## Premise
 

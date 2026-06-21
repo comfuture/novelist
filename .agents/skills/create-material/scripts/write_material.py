@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Write an el_empiezo story material markdown file from JSON."""
+"""Write a story material markdown file from JSON."""
 
 from __future__ import annotations
 

@@ -1,6 +1,6 @@
 ---
 name: create-character
-description: Create character source files for the el_empiezo novel project. Use when the user wants to invent, refine, name, or save a fictional character into characters/ as Markdown with YAML frontmatter, especially from role, personality, setting, era, region, language, relationships, motives, secrets, or plot function.
+description: Create character source files for this novel project. Use when the user wants to invent, refine, name, or save a fictional character into characters/ as Markdown with YAML frontmatter, especially from role, personality, setting, era, region, language, relationships, motives, secrets, or plot function.
 ---
 
 # Create Character
