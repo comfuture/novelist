@@ -1,0 +1,4 @@
+interface:
+  display_name: "Build EPUB"
+  short_description: "Render chapters into EPUB output"
+  default_prompt: "Use $build-epub to render the chapters into an EPUB."

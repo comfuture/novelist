@@ -26,6 +26,7 @@ The canonical manuscript source is `chapters/`. Rendered output belongs in `publ
 - `chapters/`: actual chapter manuscript files, sorted by filename.
 - `published/`: generated render output only. Do not treat this as canonical source.
 - `.agents/skills/`: repository-scoped Agent Skills for repeatable novel-writing workflows.
+- `scripts/`: deterministic project automation, including EPUB rendering.
 
 ## Markdown And Frontmatter Rules
 
@@ -143,3 +144,5 @@ The intended publishing flow is:
 4. The final `.epub` is generated from `published/`.
 
 Do not treat `.epub` output as editable source. If the book needs changes, update source files first, then regenerate.
+
+Use `python3 scripts/build_epub.py` or the local `$build-epub` skill to generate EPUB output.
