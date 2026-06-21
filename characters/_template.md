@@ -2,10 +2,15 @@
 id: char-slug
 type: character
 name: ""
+original_name: ""
+korean_reading: ""
+name_language: ko
+name_context: ""
 aliases: []
 role: ""
 status: seed
 age: ""
+gender: ""
 pronouns: ""
 first_appearance: ""
 last_seen: ""

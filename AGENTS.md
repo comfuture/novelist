@@ -24,6 +24,7 @@ The canonical manuscript source is `chapters/`. Rendered output belongs in `publ
 - `style/`: voice, point of view, tense, prose conventions, recurring terms, and revision preferences.
 - `chapters/`: actual chapter manuscript files, sorted by filename.
 - `published/`: generated render output only. Do not treat this as canonical source.
+- `.agents/skills/`: repository-scoped Agent Skills for repeatable novel-writing workflows.
 
 ## Markdown And Frontmatter Rules
 
@@ -124,6 +125,10 @@ When editing prose:
 If possible, use subagents for independent work such as continuity checks, outline review, style consistency review, or render verification. Reuse already open subagents in subsequent sessions when their context is relevant.
 
 Keep delegated tasks concrete and non-overlapping. Do not let multiple agents edit the same source file at the same time.
+
+## Local Skills
+
+Project-specific reusable skills live in `.agents/skills/` so they are repository-scoped and portable to Codex-compatible Agent Skills tooling. Prefer this location over `.codex/skills` for checked-in project skills.
 
 ## Publishing Workflow
 
