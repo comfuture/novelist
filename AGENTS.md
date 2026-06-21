@@ -35,7 +35,7 @@ All source material files must be Markdown with YAML frontmatter.
 Required frontmatter keys for source material:
 
 - `id`: stable lowercase identifier, unique across the project.
-- `type`: one of `project`, `character`, `material`, `macguffin`, `plot`, `outline`, `world`, `style_guide`, `chapter`, or `publishing_note`.
+- `type`: one of `project`, `documentation`, `character`, `material`, `macguffin`, `plot`, `outline`, `world`, `style_guide`, `chapter`, or `publishing_note`.
 - `title` or `name`: human-readable label.
 - `status`: one of `seed`, `outline`, `draft`, `revision`, `final`, or `archived`.
 - `tags`: YAML array.
