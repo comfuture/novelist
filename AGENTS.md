@@ -130,6 +130,8 @@ Keep delegated tasks concrete and non-overlapping. Do not let multiple agents ed
 
 Project-specific reusable skills live in `.agents/skills/` so they are repository-scoped and portable to Codex-compatible Agent Skills tooling. Prefer this location over `.codex/skills` for checked-in project skills.
 
+Before handling repeatable novel-building work, check `.agents/skills/` for a matching local skill and use it when applicable. Prefer these project skills for creating or refining characters, settings, plots, materials, MacGuffins, outlines, style guides, and chapter-related source files.
+
 ## Publishing Workflow
 
 The intended publishing flow is:

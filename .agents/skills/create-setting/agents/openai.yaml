@@ -1,0 +1,4 @@
+interface:
+  display_name: "Create Setting"
+  short_description: "Create novel setting files"
+  default_prompt: "Use $create-setting to create or refine the novel setting."
