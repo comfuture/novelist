@@ -1,0 +1,4 @@
+interface:
+  display_name: "Novel Story Telling"
+  short_description: "Control novel flow, continuity, and chapter handoffs"
+  default_prompt: "Use $novel-story-telling to prepare a continuity-safe plan for the next chapter."
