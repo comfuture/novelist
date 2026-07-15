@@ -3,14 +3,15 @@
 ## Contents
 
 1. Reader contract
-2. Causal architecture
-3. Pressure and release
-4. Thread control
-5. Reveal control
-6. Chapter and scene engines
-7. Resolution design
-8. Continuity state
-9. Failure modes
+2. Reader mental-model control
+3. Causal architecture
+4. Pressure and release
+5. Thread control
+6. Reveal control
+7. Chapter and scene engines
+8. Resolution design
+9. Continuity state
+10. Failure modes
 
 ## Reader Contract
 
@@ -30,6 +31,76 @@ Track how each major unit serves the promise:
 | Chapter |  |  |  |  |
 
 If a unit does not change the reader's question, character's options, or cost of action, compress, combine, or remove it.
+
+## Reader Mental-Model Control
+
+Treat the reader model as an explicit editorial hypothesis about a defined target reader, not as a claim about every reader's actual mind. Specify the target reader's assumed language, genre literacy, remembered story anchors, and tolerance for unfamiliar terms. Do not solve ambiguity by silently assuming an expert reader unless the project establishes one.
+
+### Keep evidence layers separate
+
+| Layer | Contents | Count as reader knowledge? |
+| --- | --- | --- |
+| Author truth | Canon, backstory, future events, hidden mechanisms | No |
+| Viewpoint model | What the viewpoint character knows, believes, or avoids | Only when Draft makes it available |
+| Reader evidence | What prior and current Draft text has shown or stated | Yes |
+| Expected inference | What the target reader will probably conclude from that evidence | Editorial hypothesis; verify |
+
+Never infer reader knowledge from Synopsis, Revision Notes, outlines, source sheets, or hidden-truth fields. When reader and viewpoint knowledge differ, make the asymmetry deliberate and reader-recoverable.
+
+### Map the state trajectory
+
+Before drafting a chapter, define its entry and exit reader models. For every scene or major turn, fill this compact map:
+
+| Beat or scene | Entry model | Recalled anchor | Reader-visible cue | Intended update or inference | Deliberately unresolved | Exit question or prediction |
+| --- | --- | --- | --- | --- | --- | --- |
+|  |  |  |  |  |  |  |
+
+Prefer one primary conceptual update per beat. A beat may move several plot states, but the reader should have a dominant change to integrate: learn a fact, revise a cause, revalue a person, recognize a pattern, or replace a governing question.
+
+Use this cohesion test between adjacent beats:
+
+> Because the reader has seen **X**, they can interpret **Y** as **Z**; therefore the next beat changes **Q**.
+
+If the sentence cannot be completed without author-only information, add a reader-facing prerequisite, reorder the beats, or change the intended inference.
+
+### Layer information for comprehension and reward
+
+- Move from a recalled anchor to a new observation, then to implication and consequence.
+- Separate what is observed, how a character interprets it, what the reader may infer, and what is actually true.
+- Introduce a name, rule, location, or device before its exact identity matters, or attach it immediately to a familiar function, desire, threat, or contrast.
+- Let the reader use a new model in a decision, prediction, or reinterpretation before adding another dense model.
+- After action or a reveal, include enough consequence or reflection for the reader to update the larger picture.
+- Withhold truth, motive, significance, or access when useful; do not withhold basic scene orientation merely to create mystery.
+- Preserve inference as a source of pleasure. Do not explain a connection that the Draft has made legible unless the voice, character, or genre calls for confirmation.
+
+Treat every unexplained term, unnamed causal gap, and unresolved reference as information debt. Debt can create curiosity, but several unrelated debts introduced together create fog. Flag a beat for revision when it requires the reader to integrate three or more unrelated new entities, rules, time frames, or causal claims before any one becomes usable.
+
+### Audit from the reader side
+
+After drafting, ignore author-side sources and reconstruct the trajectory from publishable Draft text. At each checkpoint, complete these sentences in one line each:
+
+- The reader can now describe ...
+- The reader likely believes or suspects ... because ...
+- The reader still asks ...
+- The reader anticipates ...
+- The intended feeling arises from ...
+
+Compare the reconstruction with the planned map. Classify mismatches before revising:
+
+- **missing anchor:** identity, location, goal, time, or stakes cannot be recovered;
+- **causal leap:** the intended conclusion lacks a visible premise;
+- **author-knowledge leak:** prose assumes a source-only fact;
+- **orphan detail:** information has no current function or memorable attachment;
+- **overload:** several unrelated updates compete in one beat;
+- **accidental false model:** cues strongly support an unintended conclusion;
+- **stagnation:** repetition adds words but does not confirm, complicate, or reframe;
+- **over-explanation:** prose states the connection after the reader has already earned it.
+
+Repair the smallest broken link. Prefer changing sequence, adding a concrete cue, attaching a detail to an existing anchor, splitting a beat, or deleting noise. Add exposition only when the missing link itself must be stated.
+
+### Persist across chapters
+
+In the story ledger, keep reader-facing evidence separate from expected inference and open questions. Reader-facing evidence is verifiable against Draft; expected inference is editorial and may be wrong; an open question is intentional only when the chapter supplies enough orientation to formulate it. Recheck the latest reader-model entry against prior Draft before using it as the next chapter's baseline.
 
 ## Causal Architecture
 

@@ -59,16 +59,48 @@ def list_lines(values: Any, empty: str = "- None recorded.") -> list[str]:
     return result
 
 
+def reader_model_lines(values: Any) -> list[str]:
+    if not values:
+        return ["- None recorded."]
+    if not isinstance(values, list):
+        values = [values]
+    result = []
+    for value in values:
+        if not isinstance(value, dict):
+            result.append(f"- {value}")
+            continue
+        identifier = value.get("id") or value.get("name") or "reader-model-change"
+        status = value.get("status") or "editorial"
+        evidence = str(value.get("evidence") or "").strip()
+        inference = str(value.get("expected_inference") or "").strip()
+        uncertainty = str(value.get("uncertainty") or "").strip()
+        parts = []
+        if evidence:
+            parts.append(f"Evidence: {evidence}")
+        if inference:
+            parts.append(f"Expected inference: {inference}")
+        if uncertainty:
+            parts.append(f"Uncertainty: {uncertainty}")
+        if not parts:
+            fallback = value.get("description") or value.get("change") or value.get("fact")
+            parts.append(str(fallback or "No evidence or expected inference supplied."))
+        result.append(f"- {identifier} [{status}]: {' | '.join(parts)}")
+    return result
+
+
 def render_section(card: dict[str, Any]) -> str:
     number = card["chapter"]
     title = str(card.get("title", "")).strip()
     heading = f"## Chapter {number:03d}" + (f" — {title}" if title else "")
+    reader_changes = reader_model_lines(card.get("reader_model_changes"))
     fields = (
         ("Summary", [str(card["summary"]).strip()]),
         ("Canon Facts", list_lines(card.get("canon_facts"))),
         ("Character And Relationship Changes", list_lines(card.get("state_changes"))),
         ("Timeline And Location Changes", list_lines(card.get("timeline_changes"))),
         ("Reveals And Knowledge Changes", list_lines(card.get("knowledge_changes"))),
+        ("Reader Evidence And Expected Inference (Editorial)", reader_changes),
+        ("Open Reader Questions (Editorial)", list_lines(card.get("open_reader_questions"))),
         ("MacGuffin And Clue Changes", list_lines(card.get("macguffin_changes"))),
         ("Open Threads", list_lines(card.get("open_threads"))),
         ("Resolved Threads", list_lines(card.get("resolved_threads"))),
@@ -98,7 +130,10 @@ def initial_document(today: str) -> str:
         "tags: [continuity, story-state]\n"
         "---\n"
         "# Story Continuity Ledger\n\n"
-        "This ledger records reviewed chapter outcomes. Canonical source files remain authoritative when conflicts exist.\n\n"
+        "This ledger records reviewed chapter outcomes. Canonical source files "
+        "remain authoritative when conflicts exist. Reader-model entries are "
+        "editorial hypotheses, not canon facts, and must remain grounded in "
+        "reader-visible Draft evidence.\n\n"
     )
 
 

@@ -1,6 +1,6 @@
 ---
 name: novel-story-telling
-description: Design and control whole-novel storytelling, chapter-to-chapter flow, conflict escalation and resolution, reveals, foreshadowing, continuity, safe chapter-file creation, and next-chapter handoffs for this Markdown novel repository. Use when planning, drafting, or revising story structure, preparing or writing the next chapter from prior context, creating a template-conformant chapter under chapters/, checking contradictions, maintaining story-state summaries, selecting genre-specific narrative devices, or auditing character, timeline, world-rule, clue, MacGuffin, and plot-thread continuity.
+description: Design and control whole-novel storytelling, reader mental-model progression, chapter-to-chapter flow, conflict escalation and resolution, reveals, foreshadowing, continuity, safe chapter-file creation, and next-chapter handoffs for this Markdown novel repository. Use when planning, drafting, or revising story structure, modeling what a target reader knows, infers, misreads, or still asks at each story turn, auditing cohesion or reader orientation, preparing or writing the next chapter from prior context, creating a template-conformant chapter under chapters/, checking contradictions, maintaining story-state summaries, selecting genre-specific narrative devices, or auditing character, timeline, world-rule, clue, MacGuffin, and plot-thread continuity.
 ---
 
 # Novel Story Telling
@@ -28,6 +28,7 @@ Read `AGENTS.md`, `project.md`, `style/000.style-guide.md`, `plot/000.master-plo
 
 - output language and prose constraints;
 - current story promise and governing question;
+- target reader baseline, including genre literacy, prior reader-visible anchors, active questions, and unfamiliar terminology;
 - target chapter and its irreversible change;
 - active plot threads, promises, clues, and MacGuffins;
 - current character knowledge, desire, condition, relationship, and location;
@@ -50,6 +51,8 @@ python3 .agents/skills/novel-story-telling/scripts/build_story_context.py \
 ```
 
 Read the resulting pack. It prioritizes explicit links, active master sources, the target outline, recent chapters, the story ledger, and query matches. It includes source paths so every inferred constraint can be checked against canon.
+
+Treat the context pack as author-side evidence, not proof that a reader has seen a fact. Reconstruct reader knowledge only from prior publishable `## Draft` text and explicitly recorded reader-facing evidence. Synopsis, Revision Notes, outlines, character sheets, hidden truth, and canon-fact ledger entries do not count as reader exposure. Treat recorded expected inferences as editorial hypotheses and spot-check them against Draft before relying on them.
 
 Increase the budget only when the pack proves insufficient. Prefer linked fact cards and `Continuity` sections over full old chapters. Read a full source file only to resolve ambiguity or recover scene-level nuance.
 
@@ -75,6 +78,7 @@ Before outlining or drafting, state compactly:
 - **Change chain:** cause → decision → consequence → new constraint.
 - **Thread states:** dormant, active, escalating, converging, paid, or intentionally deferred.
 - **Information states:** what the reader, viewpoint character, allies, and opponents know or falsely believe.
+- **Reader-model path:** entry model → recalled anchor → reader-visible cue → intended inference → confirmation, contradiction, or reframe → exit question or prediction.
 - **Cost ladder:** what becomes harder, more public, more intimate, less reversible, or more morally expensive.
 - **Resolution condition:** the decision and established mechanism capable of answering the promise.
 
@@ -88,9 +92,12 @@ Give the chapter one primary job. Define:
 - viewpoint, location, world time, and elapsed time;
 - immediate objective and opposition;
 - active thread or promise being moved;
+- reader entry model: what the target reader can recall, currently believes or suspects, and wants answered;
 - information to expose, reinterpret, conceal legitimately, or pay off;
+- reader update: the primary observation and inference the chapter enables, the textual prerequisite for it, and any ambiguity intentionally retained;
 - one meaningful relationship or power shift;
 - one irreversible or costly change;
+- reader exit model: what picture has become clearer or been reframed, and what question or prediction now pulls the reader forward;
 - exit state and hook into the following chapter;
 - details that must not change.
 
@@ -119,11 +126,15 @@ Then perform the semantic gate using the context pack:
 
 Fix an invalid transition in the plan before drafting. If the author intends a retcon, identify every affected source file and obtain confirmation before changing established canon.
 
+Then map the chapter's major beats with the reader-model table in [story-flow.md](references/story-flow.md). Every required inference must have reader-visible prerequisites. Preserve local orientation—who wants what, what changed, and why it matters—even when the larger truth remains hidden. Split or sequence a beat that requires several unrelated new names, rules, timelines, and causal claims at once unless overload is an intentional experience.
+
 ### 7. Draft Or Revise The Chapter
 
 Follow the author-approved chapter contract and existing voice. Make every scene change at least one of: knowledge, leverage, relationship, objective, risk, resource, location, or commitment.
 
 Preserve causal links. Use `therefore` or `but` transitions between major beats more often than unrelated `and then` transitions. Let relief expose consequences, deepen attachment, or reposition the next threat.
+
+Compose information as a reader-state transition: anchor the current picture, present a perceivable cue, permit the intended inference, and let action or consequence use that update. The reader need not know the hidden truth, but must be able to understand the immediate situation and recover the intended causal bridge. Prefer reordering, dramatizing, bridging, or pruning information over repairing every gap with explanation. Preserve rewarding subtext and inference instead of explaining away all ambiguity.
 
 Do not hide information that the viewpoint character is actively thinking merely to manufacture surprise. Hide significance, access, motive, or interpretation instead.
 
@@ -200,6 +211,8 @@ python3 .agents/skills/novel-story-telling/scripts/check_continuity.py \
 
 Resolve every error. Review warnings and either fix them or report why they are intentional. Do not present a malformed chapter as completed.
 
+After the structural gate, run the reader mental-model audit in [story-flow.md](references/story-flow.md) using only reader-visible Draft text. At each scene or major turn, state what the target reader can now describe, likely believes or suspects, still asks, and anticipates. Compare that reconstruction with the intended trajectory and repair accidental confusion, author-knowledge leakage, unsupported inference, cognitive overload, or inert repetition.
+
 The strict gate must reject curly double-quoted speech without the surrounding
 emphasis and straight ASCII dialogue quotes. It must accept narration before or
 after a marked dialogue range in the same paragraph, dialogue-only paragraphs,
@@ -221,12 +234,24 @@ After the author accepts or finalizes a chapter:
   "state_changes": [],
   "timeline_changes": [],
   "knowledge_changes": [],
+  "reader_model_changes": [
+    {
+      "id": "reader-model-change-id",
+      "status": "expected",
+      "evidence": "Reader-visible detail in Draft.",
+      "expected_inference": "What the target reader can now infer.",
+      "uncertainty": "Alternative interpretation or confidence limit."
+    }
+  ],
+  "open_reader_questions": [],
   "macguffin_changes": [],
   "open_threads": [],
   "resolved_threads": [],
   "uncertainties": []
 }
 ```
+
+Keep `reader_model_changes` editorial rather than canonical. Use separate `evidence` and `expected_inference` fields, and record an `uncertainty` whenever another interpretation remains plausible. Record `open_reader_questions` only when the chapter intentionally keeps them alive; do not use this section for missing explanations or continuity gaps.
 
 3. Preview the deterministic ledger change:
 
@@ -256,6 +281,9 @@ Do not finish a story-planning or chapter task until:
 - the target change advances the story promise or intentionally complicates it;
 - escalation changes kind or cost, not only volume;
 - the chapter exit differs materially from its entry;
+- the target reader's exit model differs intentionally from its entry model;
+- every required reader inference has prior reader-visible evidence or a recoverable causal bridge;
+- intended ambiguity preserves local orientation and is not accidental confusion;
 - all used knowledge, rules, objects, and relationships have provenance;
 - setups and payoffs remain tracked;
 - the output language and prose style match the author's contract;
