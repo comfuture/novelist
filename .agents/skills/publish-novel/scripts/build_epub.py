@@ -666,6 +666,26 @@ code {
   font-size: 0.88em;
   overflow-wrap: anywhere;
 }
+.chapter-body p code {
+  -webkit-box-decoration-break: clone;
+  background-color: rgba(32, 45, 60, 0.08);
+  border-radius: 0.22em;
+  box-decoration-break: clone;
+  color: inherit;
+  padding: 0.08em 0.24em;
+}
+.chapter-body p code::before {
+  content: "`";
+}
+.chapter-body p code::after {
+  content: "`";
+}
+@media (prefers-color-scheme: dark) {
+  .chapter-body p code {
+    background-color: rgba(235, 240, 246, 0.14);
+    color: inherit;
+  }
+}
 figure {
   break-inside: avoid;
   margin: 1.8em 0;
@@ -914,10 +934,22 @@ def validate_epub(path: Path) -> dict[str, int]:
         required_style_rules = (
             ".chapter-body i.dialog",
             ".chapter-body p",
+            ".chapter-body p code",
+            ".chapter-body p code::before",
+            ".chapter-body p code::after",
             ".scene-ornament",
         )
         if any(rule not in css for rule in required_style_rules):
             raise SystemExit("EPUB stylesheet is missing canonical reading styles")
+        if (
+            css.count('content: "`";') < 2
+            or "background-color: rgba(32, 45, 60, 0.08)" not in css
+            or "@media (prefers-color-scheme: dark)" not in css
+            or "background-color: rgba(235, 240, 246, 0.14)" not in css
+        ):
+            raise SystemExit(
+                "EPUB stylesheet is missing visible backticks or adaptive inline-code styling"
+            )
         if "@import" in css or "url(" in css:
             raise SystemExit("EPUB stylesheet must not depend on external styles or fonts")
 

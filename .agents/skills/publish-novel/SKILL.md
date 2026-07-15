@@ -108,6 +108,12 @@ The script must:
 - render ordinary Markdown paragraphs as `p.prose` in a sans-serif stack and
   each canonical `*“…”*` speech range as `<i class="dialog">`, styled with a
   serif italic stack without forcing a paragraph boundary;
+- render inline Markdown backtick ranges as fixed-width `<code>` text and use
+  local CSS `::before` and `::after` content to show the opening and closing
+  backtick glyphs to readers; these visible delimiters are a narrative marker
+  for machine text that is evaluated literally, not disposable source syntax;
+  place the complete inline code range on a subtle translucent background with
+  a dark-mode override, while inheriting the reader's foreground color;
 - render a standalone `---` or legacy Markdown thematic break as a semantic
   `<hr class="scene-break" />` paired with visible centered `* * *` text before
   list parsing;
@@ -138,8 +144,9 @@ Also inspect the generated chapter XHTML when changing the publisher or chapter
 markup rules. Confirm that editorial headings and text from Synopsis or Revision
 Notes are absent; every marked speech range becomes `<i class="dialog">` even
 when narration follows in the same paragraph; unmarked thought remains `<em>`;
-and each scene break has a visible centered `* * *` ornament instead of being
-emitted as a list.
+inline `<code>` uses a fixed-width stack and visibly retains both backtick
+delimiters through CSS; and each scene break has a visible centered `* * *`
+ornament instead of being emitted as a list.
 
 To validate an existing artifact without rebuilding, run:
 

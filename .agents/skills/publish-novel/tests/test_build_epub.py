@@ -137,6 +137,12 @@ class MarkdownRenderingTests(unittest.TestCase):
         css = build_epub.stylesheet()
         self.assertIn(".chapter-title", css)
         self.assertIn(".chapter-body i.dialog", css)
+        self.assertIn(".chapter-body p code::before", css)
+        self.assertIn(".chapter-body p code::after", css)
+        self.assertEqual(css.count('content: "`";'), 2)
+        self.assertIn("background-color: rgba(32, 45, 60, 0.08)", css)
+        self.assertIn("@media (prefers-color-scheme: dark)", css)
+        self.assertIn("background-color: rgba(235, 240, 246, 0.14)", css)
         self.assertIn(".scene-ornament", css)
         self.assertIn('"Noto Sans CJK KR"', css)
         self.assertIn('"Noto Serif CJK KR"', css)
@@ -171,6 +177,8 @@ DRAFT-SENTINEL
 
 The published paragraph.
 
+`MACHINE-LITERAL`
+
 *“The spoken range.”* The speaker said.
 
 *The inward thought.*
@@ -203,9 +211,13 @@ REVISION-SENTINEL
 
             with zipfile.ZipFile(output) as archive:
                 chapter = archive.read("OEBPS/chapters/chapter-001.xhtml").decode("utf-8")
+                css = archive.read("OEBPS/styles.css").decode("utf-8")
             self.assertIn('<p class="chapter-number">Chapter 1</p>', chapter)
             self.assertIn('<h1 class="chapter-title">Test Chapter</h1>', chapter)
             self.assertIn("DRAFT-SENTINEL", chapter)
+            self.assertIn("<code>MACHINE-LITERAL</code>", chapter)
+            self.assertEqual(css.count('content: "`";'), 2)
+            self.assertIn("@media (prefers-color-scheme: dark)", css)
             self.assertIn(
                 '<p class="prose"><i class="dialog">“The spoken range.”</i> '
                 "The speaker said.</p>",
