@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Build an EPUB from the novel markdown scaffold."""
+"""Build and validate an EPUB from the novel Markdown project."""
 
 from __future__ import annotations
 
@@ -8,20 +8,30 @@ import datetime as dt
 import html
 import json
 import mimetypes
+import posixpath
 import re
 import shutil
 import sys
 import uuid
 import zipfile
+import xml.etree.ElementTree as ET
 from dataclasses import dataclass
 from pathlib import Path
 from typing import Any
+from urllib.parse import urlsplit
 
 
 CHAPTER_RE = re.compile(r"^[0-9]{3}\.[a-z0-9]+(?:-[a-z0-9]+)*\.md$")
 IMAGE_RE = re.compile(r"!\[([^\]]*)\]\(([^)]+)\)")
 LINK_RE = re.compile(r"\[([^\]]+)\]\(([^)]+)\)")
 COVER_CANDIDATES = ("cover.png", "cover.jpg", "cover.jpeg", "cover.webp")
+REQUIRED_EPUB_MEMBERS = {
+    "mimetype",
+    "META-INF/container.xml",
+    "OEBPS/content.opf",
+    "OEBPS/nav.xhtml",
+    "OEBPS/styles.css",
+}
 
 
 @dataclass
@@ -523,6 +533,79 @@ def safe_staging_dir(project_root: Path, staging_dir: Path) -> Path:
     return resolved
 
 
+def safe_output_path(project_root: Path, output_path: Path) -> Path:
+    resolved = output_path.resolve()
+    published_root = (project_root / "published").resolve()
+    try:
+        resolved.relative_to(published_root)
+    except ValueError as exc:
+        raise SystemExit("--output must be an EPUB path under published/") from exc
+    if resolved == published_root or resolved.suffix.lower() != ".epub":
+        raise SystemExit("--output must be an .epub file under published/")
+    return resolved
+
+
+def archive_target(source_name: str, raw_target: str) -> str | None:
+    parsed = urlsplit(raw_target)
+    if parsed.scheme or parsed.netloc or raw_target.startswith("#"):
+        return None
+    path = parsed.path
+    if not path:
+        return None
+    return posixpath.normpath(posixpath.join(posixpath.dirname(source_name), path))
+
+
+def validate_epub(path: Path) -> dict[str, int]:
+    if not path.is_file() or path.stat().st_size == 0:
+        raise SystemExit(f"EPUB output is missing or empty: {path}")
+    if not zipfile.is_zipfile(path):
+        raise SystemExit(f"EPUB output is not a valid ZIP archive: {path}")
+
+    with zipfile.ZipFile(path) as epub:
+        members = epub.namelist()
+        member_set = set(members)
+        missing = sorted(REQUIRED_EPUB_MEMBERS - member_set)
+        if missing:
+            raise SystemExit(f"EPUB is missing required members: {', '.join(missing)}")
+        if not members or members[0] != "mimetype":
+            raise SystemExit("EPUB mimetype must be the first archive member")
+        if epub.getinfo("mimetype").compress_type != zipfile.ZIP_STORED:
+            raise SystemExit("EPUB mimetype must be stored without compression")
+        if epub.read("mimetype") != b"application/epub+zip":
+            raise SystemExit("EPUB mimetype content is invalid")
+
+        chapter_members = [
+            name for name in members if name.startswith("OEBPS/chapters/") and name.endswith(".xhtml")
+        ]
+        if not chapter_members:
+            raise SystemExit("EPUB contains no rendered chapter documents")
+
+        xml_members = [
+            name for name in members if name.endswith((".xhtml", ".opf", ".xml"))
+        ]
+        for name in xml_members:
+            try:
+                root = ET.fromstring(epub.read(name))
+            except ET.ParseError as exc:
+                raise SystemExit(f"EPUB XML is not well formed in {name}: {exc}") from exc
+            for element in root.iter():
+                for attribute in ("href", "src"):
+                    raw_target = element.attrib.get(attribute)
+                    if not raw_target:
+                        continue
+                    target = archive_target(name, raw_target)
+                    if target and target not in member_set:
+                        raise SystemExit(f"EPUB reference from {name} is missing: {raw_target}")
+
+        image_members = [name for name in members if name.startswith("OEBPS/images/")]
+        return {
+            "bytes": path.stat().st_size,
+            "chapters": len(chapter_members),
+            "images": len(image_members),
+            "members": len(members),
+        }
+
+
 def build(args: argparse.Namespace) -> Path:
     project_root = args.project_root.resolve()
     metadata = project_metadata(project_root)
@@ -534,8 +617,10 @@ def build(args: argparse.Namespace) -> Path:
     if not chapters:
         raise SystemExit(f"No chapter files found in {args.chapters_dir}/")
 
-    output_path = project_root / args.output
+    output_path = safe_output_path(project_root, project_root / args.output)
     staging_dir = safe_staging_dir(project_root, project_root / args.staging_dir)
+    if output_path == staging_dir or staging_dir in output_path.parents:
+        raise SystemExit("--output must not be inside --staging-dir")
     cover_path = find_cover(project_root, metadata, args.cover)
 
     if cover_path and not cover_path.exists():
@@ -622,10 +707,30 @@ def main() -> int:
     parser.add_argument("--title", default=None)
     parser.add_argument("--author", default=None)
     parser.add_argument("--language", default=None)
+    parser.add_argument(
+        "--validate-only",
+        default=None,
+        help="Validate an existing EPUB path relative to the project root without rebuilding",
+    )
     args = parser.parse_args()
 
+    if args.validate_only:
+        validation_path = Path(args.validate_only)
+        if not validation_path.is_absolute():
+            validation_path = args.project_root.resolve() / validation_path
+        report = validate_epub(validation_path)
+        print(
+            f"Validated {validation_path} "
+            f"({report['chapters']} chapters, {report['images']} images, {report['bytes']} bytes)"
+        )
+        return 0
+
     output = build(args)
-    print(output)
+    report = validate_epub(output)
+    print(
+        f"Published {output} "
+        f"({report['chapters']} chapters, {report['images']} images, {report['bytes']} bytes)"
+    )
     return 0
 
 

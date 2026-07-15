@@ -2,7 +2,7 @@
 type: agent_instructions
 project: novel-project
 created: 2026-06-21
-updated: 2026-06-21
+updated: 2026-07-15
 ---
 # AGENTS.md
 
@@ -26,7 +26,6 @@ The canonical manuscript source is `chapters/`. Rendered output belongs in `publ
 - `chapters/`: actual chapter manuscript files, sorted by filename.
 - `published/`: generated render output only. Do not treat this as canonical source.
 - `.agents/skills/`: repository-scoped Agent Skills for repeatable novel-writing workflows.
-- `scripts/`: deterministic project automation, including EPUB rendering.
 
 ## Markdown And Frontmatter Rules
 
@@ -132,7 +131,7 @@ Keep delegated tasks concrete and non-overlapping. Do not let multiple agents ed
 
 Project-specific reusable skills live in `.agents/skills/` so they are repository-scoped and portable to Codex-compatible Agent Skills tooling. Prefer this location over `.codex/skills` for checked-in project skills.
 
-Before handling repeatable novel-building work, check `.agents/skills/` for a matching local skill and use it when applicable. Prefer these project skills for creating or refining characters, settings, plots, materials, MacGuffins, outlines, style guides, visual assets, EPUB builds, and chapter-related source files.
+Before handling repeatable novel-building work, check `.agents/skills/` for a matching local skill and use it when applicable. Prefer these project skills for creating or refining characters, settings, plots, materials, MacGuffins, outlines, style guides, visual assets, publication, and chapter-related source files.
 
 ## Publishing Workflow
 
@@ -141,8 +140,8 @@ The intended publishing flow is:
 1. Source material and manuscript live in Markdown files with frontmatter.
 2. `chapters/*.md` are rendered in filename order.
 3. Rendered intermediate files are written to `published/`.
-4. The final `.epub` is generated from `published/`.
+4. The local `$publish-novel` skill runs its bundled packaging script and validates the final `.epub` generated through staging under `published/`.
 
 Do not treat `.epub` output as editable source. If the book needs changes, update source files first, then regenerate.
 
-Use `python3 scripts/build_epub.py` or the local `$build-epub` skill to generate EPUB output.
+Use the local `$publish-novel` skill to generate and validate EPUB output. The author should request publication with a prompt; the skill runs its bundled script internally.
