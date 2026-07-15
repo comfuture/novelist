@@ -11,7 +11,7 @@ from datetime import date
 from pathlib import Path
 from typing import Any
 
-from story_io import ID_PREFIXES, LINK_FIELDS, as_list, dump_json, load_records
+from story_io import ID_PREFIXES, LINK_FIELDS, as_list, dump_json, load_records, split_h2_sections
 
 
 REQUIRED = {"id", "type", "status", "tags", "created", "updated"}
@@ -60,6 +60,10 @@ TEMPLATE_PLACEHOLDERS = (
     "One or two paragraphs describing what changes in this chapter.",
     "Write the chapter prose here.",
 )
+LEGACY_SCENE_BREAK = re.compile(
+    r"^(?:(?:\*[ \t]*){3,}|(?:_[ \t]*){3,}|(?:-[ \t]*){3,})$"
+)
+DIALOGUE_SPAN = re.compile(r"(?<!\*)\*“([^“”]+)”\*(?!\*)")
 
 
 def parse_args() -> argparse.Namespace:
@@ -72,6 +76,120 @@ def parse_args() -> argparse.Namespace:
 
 def issue(level: str, code: str, path: str, message: str) -> dict[str, str]:
     return {"level": level, "code": code, "source": path, "message": message}
+
+
+def draft_markup_issues(draft: str) -> list[tuple[str, int, str]]:
+    """Return deterministic Markdown conflicts inside publishable prose."""
+    findings: list[tuple[str, int, str]] = []
+    lines = draft.splitlines()
+
+    offset = 0
+    for paragraph in re.split(r"\n[ \t]*\n", draft):
+        line_number = draft[:offset].count("\n") + 1
+        offset += len(paragraph) + 2
+        stripped_paragraph = paragraph.strip()
+        if not stripped_paragraph:
+            continue
+        visible = re.sub(r"`[^`\n]*`", "", stripped_paragraph)
+        visible = re.sub(r"!\[[^\]]*\]\([^)]+\)", "", visible)
+        if "“" in visible or "”" in visible:
+            unclassified = DIALOGUE_SPAN.sub("", visible)
+            if "“" in unclassified or "”" in unclassified:
+                findings.append(
+                    (
+                        "chapter-dialogue-format",
+                        line_number,
+                        "Wrap each spoken range as *“…”*; narration may remain in the same Markdown paragraph.",
+                    )
+                )
+        if re.search(r'"[^"\n]+"', visible):
+            findings.append(
+                (
+                    "chapter-dialogue-quotes",
+                    line_number,
+                    "Use curly double quotes for spoken dialogue and curly single quotes for mentioned text.",
+                )
+            )
+
+    for index, line in enumerate(lines):
+        line_number = index + 1
+        stripped = line.strip()
+        if not stripped:
+            continue
+        if LEGACY_SCENE_BREAK.fullmatch(stripped) and stripped != "---":
+            findings.append(
+                (
+                    "chapter-scene-break",
+                    line_number,
+                    "Use a standalone --- for a scene break; spaced asterisks can render as a list.",
+                )
+            )
+            continue
+        if stripped == "---":
+            before_blank = index == 0 or not lines[index - 1].strip()
+            after_blank = index == len(lines) - 1 or not lines[index + 1].strip()
+            if not (before_blank and after_blank):
+                findings.append(
+                    (
+                        "chapter-scene-break-spacing",
+                        line_number,
+                        "Put a blank line before and after a standalone --- scene break.",
+                    )
+                )
+            continue
+        if re.match(r"^(?:[-+*]|[0-9]+\.)[ \t]+", stripped):
+            findings.append(
+                (
+                    "chapter-prose-list",
+                    line_number,
+                    "Do not use list markers to format narration or dialogue in Draft prose.",
+                )
+            )
+        if stripped.startswith(">"):
+            findings.append(
+                (
+                    "chapter-prose-blockquote",
+                    line_number,
+                    "Do not use Markdown blockquotes to format spoken dialogue.",
+                )
+            )
+        if re.match(r"^(`{3,}|~{3,})", stripped):
+            findings.append(
+                (
+                    "chapter-prose-code-block",
+                    line_number,
+                    "Use inline backticks for machine, UI, or log literals; fenced blocks are not prose.",
+                )
+            )
+
+        unescaped = re.sub(r"\\.", "", stripped)
+        if unescaped.count("`") % 2:
+            findings.append(
+                (
+                    "chapter-inline-code",
+                    line_number,
+                    "Inline backtick markers must be balanced on the same line.",
+                )
+            )
+        without_code = re.sub(r"`[^`]*`", "", unescaped)
+        if without_code.count("**") % 2:
+            findings.append(
+                (
+                    "chapter-strong-emphasis",
+                    line_number,
+                    "Strong-emphasis markers must be balanced on the same line.",
+                )
+            )
+        without_strong = without_code.replace("**", "")
+        if without_strong.count("*") % 2:
+            findings.append(
+                (
+                    "chapter-italics",
+                    line_number,
+                    "Italic markers must be balanced on the same line.",
+                )
+            )
+    return findings
 
 
 def audit(root: Path) -> dict[str, Any]:
@@ -169,12 +287,22 @@ def audit(root: Path) -> dict[str, Any]:
             first_line = record.body.splitlines()[0].strip() if record.body else ""
             if first_line != f"# {meta.get('title', '')}":
                 issues.append(issue("error", "chapter-first-heading", record.relpath, "The first body line must be the title H1."))
-            h2_titles = [title for level, title in headings if level == "##"]
+            h2_sections = split_h2_sections(record.body)
+            h2_titles = [title for title, _content in h2_sections]
             for section in CHAPTER_SECTIONS:
                 if h2_titles.count(section) != 1:
                     issues.append(
                         issue("error", "chapter-section", record.relpath, f"Chapter must contain exactly one ## {section} section.")
                     )
+            if h2_titles != list(CHAPTER_SECTIONS):
+                issues.append(
+                    issue(
+                        "error",
+                        "chapter-section-layout",
+                        record.relpath,
+                        "Chapter H2 sections must be exactly Synopsis, Draft, then Revision Notes; use H3 through H6 for manuscript subheadings.",
+                    )
+                )
             if all(h2_titles.count(section) == 1 for section in CHAPTER_SECTIONS):
                 positions = [h2_titles.index(section) for section in CHAPTER_SECTIONS]
                 if positions != sorted(positions):
@@ -186,10 +314,20 @@ def audit(root: Path) -> dict[str, Any]:
                             "Required sections must appear as Synopsis, Draft, then Revision Notes.",
                         )
                     )
-            if meta.get("status") in {"draft", "revision", "final"} and not record.sections.get("synopsis", "").strip():
+            section_content = {
+                title: content
+                for title, content in h2_sections
+                if h2_titles.count(title) == 1
+            }
+            if meta.get("status") in {"draft", "revision", "final"} and not section_content.get("Synopsis", "").strip():
                 issues.append(issue("error", "chapter-synopsis", record.relpath, "Synopsis section must not be empty."))
-            if meta.get("status") in {"draft", "revision", "final"} and not record.sections.get("draft", "").strip():
+            draft = section_content.get("Draft", "")
+            if meta.get("status") in {"draft", "revision", "final"} and not draft.strip():
                 issues.append(issue("error", "chapter-draft", record.relpath, "Draft section must not be empty."))
+            for code, line_number, message in draft_markup_issues(draft):
+                issues.append(
+                    issue("error", code, record.relpath, f"Draft line {line_number}: {message}")
+                )
             for placeholder in TEMPLATE_PLACEHOLDERS:
                 if placeholder in record.body:
                     issues.append(

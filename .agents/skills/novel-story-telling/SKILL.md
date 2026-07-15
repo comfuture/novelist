@@ -164,6 +164,32 @@ The script must create exactly `chapters/NNN.lowercase-ascii-slug.md`, populate 
 
 Every chapter file must follow `chapters/_template.md` and contain exactly one H1 matching `title`, followed by exactly one each of `## Synopsis`, `## Draft`, and `## Revision Notes`. Put manuscript prose only in `## Draft`. Remove all template placeholder prose. Do not write a chapter outside `chapters/`, nest it in a subdirectory, omit YAML arrays, or invent non-ASCII filenames.
 
+Treat the chapter file as an editorial container: only `## Draft` is
+publishable. Keep Synopsis and Revision Notes useful to writers, but never
+repeat their text as a preface, summary, or appendix inside Draft.
+
+Use the Draft Markdown contract consistently:
+
+- Use normal Markdown paragraph boundaries: only a blank line starts a new
+  paragraph. Dialogue markup does not force a paragraph boundary.
+- Keep narration as plain prose. Wrap every spoken range as exact `*“…”*`,
+  whether it stands alone or shares a paragraph with narration, as in
+  `*“Approved.”* Rhea said.` EPUB maps only that range to
+  `<i class="dialog">` with serif italic styling.
+- Reserve unquoted `*…*` for interior thought. Use curly single quotes `‘…’`
+  for cited wording, remembered phrasing, or a quotation nested inside speech.
+  A curly double-quoted span anywhere outside exact `*“…”*` markers is an error
+  because it cannot be styled or classified safely.
+- Use `**…**` only for genuine strong emphasis. Keep every marker pair balanced
+  on one line.
+- Use inline backticks only for literal machine output, UI labels, filenames,
+  code identifiers, or log text.
+- Put `---` alone between blank lines for a scene or time break. Never use
+  `* * *` or a decorative bullet sequence.
+- Do not use lists, blockquotes, or fenced code blocks anywhere inside Draft.
+  Reserve H3 through H6 for genuine subheadings and do not add another H2 inside
+  Draft.
+
 Immediately after creating or revising the file, run:
 
 ```bash
@@ -173,6 +199,11 @@ python3 .agents/skills/novel-story-telling/scripts/check_continuity.py \
 ```
 
 Resolve every error. Review warnings and either fix them or report why they are intentional. Do not present a malformed chapter as completed.
+
+The strict gate must reject curly double-quoted speech without the surrounding
+emphasis and straight ASCII dialogue quotes. It must accept narration before or
+after a marked dialogue range in the same paragraph, dialogue-only paragraphs,
+unquoted italic interior thought, and curly single-quoted cited wording.
 
 ### 8. Post-Draft State Update
 
@@ -230,4 +261,6 @@ Do not finish a story-planning or chapter task until:
 - the output language and prose style match the author's contract;
 - structural audit errors are resolved;
 - the chapter exists directly under `chapters/` with synchronized filename, frontmatter, H1, and required body sections;
+- Draft prose follows the paragraph, dialogue, emphasis, literal-text, and
+  scene-break Markdown contract;
 - new canon is reflected in source files and the reviewed story ledger when applicable.

@@ -169,6 +169,35 @@ def split_sections(body: str) -> dict[str, str]:
     return {key: "\n".join(lines).strip() for key, lines in sections.items()}
 
 
+def split_h2_sections(body: str) -> list[tuple[str, str]]:
+    """Return exact H2 sections outside fenced code, preserving duplicates."""
+    headings: list[tuple[str, int, int]] = []
+    fence_char: str | None = None
+    offset = 0
+    for raw_line in body.splitlines(keepends=True):
+        line = raw_line.rstrip("\r\n")
+        fence = re.match(r"^(`{3,}|~{3,})", line)
+        if fence:
+            marker_char = fence.group(1)[0]
+            if fence_char is None:
+                fence_char = marker_char
+            elif fence_char == marker_char:
+                fence_char = None
+            offset += len(raw_line)
+            continue
+        if fence_char is None:
+            heading = re.fullmatch(r"^##(?!#)[ \t]+(.+?)[ \t]*$", line)
+            if heading:
+                headings.append((heading.group(1).strip(), offset, offset + len(raw_line)))
+        offset += len(raw_line)
+
+    sections: list[tuple[str, str]] = []
+    for index, (title, _start, content_start) in enumerate(headings):
+        content_end = headings[index + 1][1] if index + 1 < len(headings) else len(body)
+        sections.append((title, body[content_start:content_end].strip()))
+    return sections
+
+
 def read_record(path: Path, root: Path) -> Record:
     text = path.read_text(encoding="utf-8")
     metadata, body = parse_frontmatter(text)

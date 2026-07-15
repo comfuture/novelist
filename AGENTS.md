@@ -78,6 +78,34 @@ Rules:
 - Keep the frontmatter `number`, `id`, `title`, and filename in sync.
 - Render chapters in numeric filename order.
 
+Chapter bodies are editorial containers with exactly one title H1 followed by
+`## Synopsis`, `## Draft`, and `## Revision Notes` in that order. Only the
+content inside `## Draft` is publishable manuscript. Synopsis and revision
+notes remain source-only editorial material and must never appear in rendered
+book output.
+
+Inside `## Draft`, keep Markdown semantic and unambiguous:
+
+- Separate paragraphs with one blank line.
+- Write narration as plain paragraphs.
+- Wrap each spoken range as exact `*“…”*`, whether it stands alone or shares a
+  paragraph with narration, as in `*“Approved.”* Rhea said.` Curly double quotes
+  identify speech; the surrounding Markdown emphasis becomes
+  `<i class="dialog">` in EPUB.
+- Let ordinary Markdown paragraph rules decide paragraph boundaries. A blank
+  line creates a new paragraph; dialogue markup never creates one by itself.
+- Reserve unquoted `*…*` for an interior thought. Use `‘…’` for quoted wording,
+  remembered phrasing, or a quotation nested inside speech; do not use `“…”`
+  for non-spoken mentions because the checker treats it as dialogue.
+- Use `**…**` only for strong semantic emphasis. Balance markers on one line.
+- Use inline backticks only for literal machine output, UI labels, filenames,
+  code identifiers, or log text.
+- Mark a scene or time break with `---` on its own line, with a blank line
+  before and after it. Never use `* * *`, which can collide with list syntax.
+- Do not use Markdown lists, blockquotes, or fenced code blocks anywhere inside
+  Draft. H3 through H6 are reserved for genuine manuscript subheadings; never
+  place another H2 inside Draft.
+
 Recommended chapter frontmatter:
 
 ```yaml
