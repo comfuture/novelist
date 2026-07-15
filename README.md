@@ -45,7 +45,7 @@ Use local skills for repeatable novel-building work:
 
 Each creation skill starts from the user's prompt, proposes a structured first pass, asks for missing information or direction, loops on feedback, and writes a Markdown/frontmatter file only after confirmation.
 
-`$novel-story-telling` reads only the sources needed for the current task. Its bundled scripts build a token-bounded context pack, run deterministic structural checks, and maintain a reviewed chapter-state ledger in `materials/000.story-ledger.md`. The skill then performs a semantic continuity gate for facts that cannot be checked mechanically. It includes focused references for general story flow, wuxia, science fiction, time travel and time loops, mystery, drama, and romantic entanglement.
+`$novel-story-telling` reads only the sources needed for the current task. Its bundled scripts build a token-bounded context pack, safely create a template-conformant chapter without overwriting an existing chapter number, run deterministic structural checks, and maintain a reviewed chapter-state ledger in `materials/000.story-ledger.md`. The skill then performs a semantic continuity gate for facts that cannot be checked mechanically. It includes focused references for general story flow, wuxia, science fiction, time travel and time loops, mystery, drama, and romantic entanglement.
 
 The skill's internal prompts and scripts are written in English. Manuscript prose and author-facing creative output follow the language explicitly requested by the author, then the language configured in `project.md` or the style guide.
 
@@ -58,7 +58,7 @@ The skill's internal prompts and scripts are written in English. Manuscript pros
 5. Use `$create-plot` to shape the central plot and supporting threads.
 6. Use `$novel-story-telling` to complete the story promise, escalation ladder, reveal plan, thread convergence, climax, resolution, and chapter-level handoffs.
 7. Use `$novel-story-telling` before each chapter to assemble prior context, check continuity, and define the chapter contract.
-8. Draft chapter files in `chapters/` using sortable names such as `001.the-genesis.md`; after approval, update newly established canon and the story ledger.
+8. Ask `$novel-story-telling` to write the approved draft through its chapter writer. It creates `chapters/NNN.lowercase-ascii-slug.md`, follows `chapters/_template.md`, refuses collisions, and immediately validates the result. After approval, update newly established canon and the story ledger.
 9. Use `$create-visual-asset` for the cover and any chapter illustrations.
 10. Ask `$publish-novel` to generate and validate the final EPUB.
 
@@ -93,7 +93,7 @@ Use $novel-story-telling to prepare and draft Chapter 007, "The Burned Index."
 
 First build a bounded context pack for Chapter 007 using the skill's scripts. Review the recent chapters, the target chapter outline, linked characters, active plot threads, world rules, relevant materials and MacGuffins, and the story continuity ledger. Run the structural continuity audit, then present a semantic continuity table and a chapter contract covering entry state, POV, time, location, immediate objective, opposition, clue exposure, relationship shift, irreversible change, exit state, and facts that must not change.
 
-Do not begin prose until unresolved contradictions or required canon decisions are listed for approval. After approval, write the chapter in Korean while preserving the existing close-third voice and terminology. When the chapter is accepted, update affected canonical source files and prepare a reviewed story-ledger fact card for Chapter 007.
+Do not begin prose until unresolved contradictions or required canon decisions are listed for approval. After approval, write the chapter in Korean while preserving the existing close-third voice and terminology. Use the skill's bundled chapter writer to create `chapters/007.the-burned-index.md` from a reviewed JSON payload; populate all template frontmatter, place prose in `## Draft`, preserve the required Synopsis and Revision Notes sections, refuse to overwrite any existing Chapter 007, and run the strict structural audit immediately after writing. When the chapter is accepted, update affected canonical source files and prepare a reviewed story-ledger fact card for Chapter 007.
 ```
 
 ## EPUB Output

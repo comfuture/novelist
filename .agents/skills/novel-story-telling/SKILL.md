@@ -1,6 +1,6 @@
 ---
 name: novel-story-telling
-description: Design and control whole-novel storytelling, chapter-to-chapter flow, conflict escalation and resolution, reveals, foreshadowing, continuity, and next-chapter handoffs for this Markdown novel repository. Use when planning or revising story structure, preparing the next chapter from prior context, checking contradictions, maintaining story-state summaries, selecting genre-specific narrative devices, or auditing character, timeline, world-rule, clue, MacGuffin, and plot-thread continuity.
+description: Design and control whole-novel storytelling, chapter-to-chapter flow, conflict escalation and resolution, reveals, foreshadowing, continuity, safe chapter-file creation, and next-chapter handoffs for this Markdown novel repository. Use when planning, drafting, or revising story structure, preparing or writing the next chapter from prior context, creating a template-conformant chapter under chapters/, checking contradictions, maintaining story-state summaries, selecting genre-specific narrative devices, or auditing character, timeline, world-rule, clue, MacGuffin, and plot-thread continuity.
 ---
 
 # Novel Story Telling
@@ -119,13 +119,60 @@ Then perform the semantic gate using the context pack:
 
 Fix an invalid transition in the plan before drafting. If the author intends a retcon, identify every affected source file and obtain confirmation before changing established canon.
 
-### 7. Draft Or Revise
+### 7. Draft Or Revise The Chapter
 
 Follow the author-approved chapter contract and existing voice. Make every scene change at least one of: knowledge, leverage, relationship, objective, risk, resource, location, or commitment.
 
 Preserve causal links. Use `therefore` or `but` transitions between major beats more often than unrelated `and then` transitions. Let relief expose consequences, deepen attachment, or reposition the next threat.
 
 Do not hide information that the viewpoint character is actively thinking merely to manufacture surprise. Hide significance, access, motive, or interpretation instead.
+
+For a new chapter, prepare a reviewed UTF-8 JSON payload. Use English field names and write `title`, `synopsis`, `draft`, and creative notes in the manuscript language:
+
+```json
+{
+  "number": 7,
+  "title": "The Burned Index",
+  "slug": "the-burned-index",
+  "status": "draft",
+  "pov": "char-protagonist",
+  "timeline": "Day 12, after sunset",
+  "setting": "world-royal-archive",
+  "word_target": 2500,
+  "characters": ["char-protagonist"],
+  "materials": [],
+  "macguffins": ["macguffin-burned-index"],
+  "plot_threads": ["plot-main"],
+  "outline": "outline-chapter-007",
+  "published": false,
+  "tags": [],
+  "synopsis": "One or two paragraphs describing the chapter's change.",
+  "draft": "Complete manuscript prose.",
+  "revision_notes": "Optional reviewed notes."
+}
+```
+
+Write it with the bundled guardrail:
+
+```bash
+python3 .agents/skills/novel-story-telling/scripts/write_chapter.py \
+  --project-root . \
+  --input /tmp/chapter-007.json
+```
+
+The script must create exactly `chapters/NNN.lowercase-ascii-slug.md`, populate the repository chapter schema, and refuse any existing chapter number or path. Never bypass that refusal. If the number already exists, treat the task as a revision and edit that file minimally; do not regenerate or replace the whole file. Preserve its `created` date, set `updated` to the current ISO date, keep `number`, `id`, `title`, `slug`, filename, and H1 synchronized, and retain author text outside the requested revision.
+
+Every chapter file must follow `chapters/_template.md` and contain exactly one H1 matching `title`, followed by exactly one each of `## Synopsis`, `## Draft`, and `## Revision Notes`. Put manuscript prose only in `## Draft`. Remove all template placeholder prose. Do not write a chapter outside `chapters/`, nest it in a subdirectory, omit YAML arrays, or invent non-ASCII filenames.
+
+Immediately after creating or revising the file, run:
+
+```bash
+python3 .agents/skills/novel-story-telling/scripts/check_continuity.py \
+  --project-root . \
+  --strict
+```
+
+Resolve every error. Review warnings and either fix them or report why they are intentional. Do not present a malformed chapter as completed.
 
 ### 8. Post-Draft State Update
 
@@ -182,4 +229,5 @@ Do not finish a story-planning or chapter task until:
 - setups and payoffs remain tracked;
 - the output language and prose style match the author's contract;
 - structural audit errors are resolved;
+- the chapter exists directly under `chapters/` with synchronized filename, frontmatter, H1, and required body sections;
 - new canon is reflected in source files and the reviewed story ledger when applicable.
