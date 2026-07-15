@@ -33,6 +33,8 @@ Editorial container contract:
 - Blank lines, not dialogue markup, determine paragraph boundaries. Use
   unquoted *italics* for interior thought and ‘single curly quotes’ for merely
   cited or remembered wording.
+- Do not write 5 consecutive dialogue-only paragraphs. Before the fifth, add a
+  speaker anchor, meaningful action, narration beat, or indirect response.
 - Use **strong emphasis** only when semantically necessary, and `inline code`
   only for literal machine, UI, filename, code, or log text.
 - Use a standalone --- with blank lines around it for a scene break.

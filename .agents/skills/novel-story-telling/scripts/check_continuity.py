@@ -64,6 +64,7 @@ LEGACY_SCENE_BREAK = re.compile(
     r"^(?:(?:\*[ \t]*){3,}|(?:_[ \t]*){3,}|(?:-[ \t]*){3,})$"
 )
 DIALOGUE_SPAN = re.compile(r"(?<!\*)\*“([^“”]+)”\*(?!\*)")
+DIALOGUE_ONLY_PARAGRAPH = re.compile(r"^\*“[^“”]+”\*$", re.DOTALL)
 
 
 def parse_args() -> argparse.Namespace:
@@ -84,12 +85,25 @@ def draft_markup_issues(draft: str) -> list[tuple[str, int, str]]:
     lines = draft.splitlines()
 
     offset = 0
+    dialogue_only_run: list[int] = []
     for paragraph in re.split(r"\n[ \t]*\n", draft):
         line_number = draft[:offset].count("\n") + 1
         offset += len(paragraph) + 2
         stripped_paragraph = paragraph.strip()
         if not stripped_paragraph:
             continue
+        if DIALOGUE_ONLY_PARAGRAPH.fullmatch(stripped_paragraph):
+            dialogue_only_run.append(line_number)
+            if len(dialogue_only_run) == 5:
+                findings.append(
+                    (
+                        "chapter-dialogue-attribution",
+                        dialogue_only_run[0],
+                        "Five consecutive dialogue-only paragraphs require a speaker anchor, meaningful action, or narration beat before the fifth paragraph.",
+                    )
+                )
+        else:
+            dialogue_only_run.clear()
         visible = re.sub(r"`[^`\n]*`", "", stripped_paragraph)
         visible = re.sub(r"!\[[^\]]*\]\([^)]+\)", "", visible)
         if "“" in visible or "”" in visible:

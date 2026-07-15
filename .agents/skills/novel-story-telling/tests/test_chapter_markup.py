@@ -70,6 +70,27 @@ The log emitted `“READY”`.
 """
         self.assertEqual(check_continuity.draft_markup_issues(draft), [])
 
+    def test_five_dialogue_only_paragraphs_require_a_readability_break(self) -> None:
+        draft = "\n\n".join(f"*“Line {index}.”*" for index in range(1, 6))
+        findings = check_continuity.draft_markup_issues(draft)
+        self.assertIn(
+            "chapter-dialogue-attribution",
+            {code for code, _line, _message in findings},
+        )
+
+    def test_attribution_breaks_a_dialogue_only_run(self) -> None:
+        draft = """*“One.”*
+
+*“Two.”*
+
+*“Three.”*
+
+*“Four.”*
+
+*“Five.”* Rhea crossed her arms.
+"""
+        self.assertEqual(check_continuity.draft_markup_issues(draft), [])
+
     def test_legacy_scene_break_is_rejected(self) -> None:
         findings = check_continuity.draft_markup_issues("Before.\n\n* * *\n\nAfter.")
         self.assertIn("chapter-scene-break", {code for code, _line, _message in findings})

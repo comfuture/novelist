@@ -187,6 +187,10 @@ Use the Draft Markdown contract consistently:
   whether it stands alone or shares a paragraph with narration, as in
   `*“Approved.”* Rhea said.` EPUB maps only that range to
   `<i class="dialog">` with serif italic styling.
+- Do not allow 5 consecutive dialogue-only paragraphs. Before the fifth, add a
+  speaker anchor, meaningful action, narration beat, or indirect response. Do
+  not add an empty attribution merely to satisfy the gate; use a beat that also
+  clarifies speaker, emotion, power, space, or changed information.
 - Reserve unquoted `*…*` for interior thought. Use curly single quotes `‘…’`
   for cited wording, remembered phrasing, or a quotation nested inside speech.
   A curly double-quoted span anywhere outside exact `*“…”*` markers is an error
@@ -214,9 +218,10 @@ Resolve every error. Review warnings and either fix them or report why they are 
 After the structural gate, run the reader mental-model audit in [story-flow.md](references/story-flow.md) using only reader-visible Draft text. At each scene or major turn, state what the target reader can now describe, likely believes or suspects, still asks, and anticipates. Compare that reconstruction with the intended trajectory and repair accidental confusion, author-knowledge leakage, unsupported inference, cognitive overload, or inert repetition.
 
 The strict gate must reject curly double-quoted speech without the surrounding
-emphasis and straight ASCII dialogue quotes. It must accept narration before or
-after a marked dialogue range in the same paragraph, dialogue-only paragraphs,
-unquoted italic interior thought, and curly single-quoted cited wording.
+emphasis, straight ASCII dialogue quotes, and 5 consecutive dialogue-only
+paragraphs without a readability break. It must accept narration before or
+after a marked dialogue range in the same paragraph, shorter dialogue-only
+runs, unquoted italic interior thought, and curly single-quoted cited wording.
 
 ### 8. Post-Draft State Update
 
