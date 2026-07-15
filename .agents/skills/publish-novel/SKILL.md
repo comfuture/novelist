@@ -11,6 +11,11 @@ Turn an author request such as "Publish this novel" into the complete EPUB workf
 
 Treat Markdown and project assets as canonical source. Treat `published/epub/` and `.epub` files as generated output. Never repair a generated EPUB by hand; update source and republish.
 
+Retain both outputs after a successful build. `published/epub/` is the
+inspectable staging tree, while `published/*.epub` is the ZIP-based EPUB
+container intended for reading software. Rebuilding may replace the contents of
+the staging tree, but publication must not delete it after packaging.
+
 Interpret `publish` as local EPUB generation only. Do not upload, distribute, email, release, or submit the book to a storefront or external service unless the author explicitly requests that separate action.
 
 ## Workflow
@@ -36,10 +41,27 @@ Confirm:
 
 - at least one chapter matches `NNN.ascii-slug.md`;
 - chapter numbers and filenames are in the intended order;
+- every chapter's H2 sections are exactly `## Synopsis`, `## Draft`, and
+  `## Revision Notes` in that order, with one non-empty, case-sensitive Draft
+  outside fenced code;
 - the requested manuscript is complete enough to publish;
 - title, author or pen name, and language are known;
-- all local Markdown image references exist;
+- all local Markdown image references inside Draft exist, and the selected
+  cover exists;
 - the output and staging paths remain under the intended project.
+
+Run the story skill's strict structural audit before packaging:
+
+```bash
+python3 .agents/skills/novel-story-telling/scripts/check_continuity.py \
+  --project-root . \
+  --strict
+```
+
+Stop on malformed dialogue markup or any other structural error. Canonical
+dialogue is an exact `*“…”*` range that may stand alone or share a paragraph
+with narration; interior thought is unquoted `*…*`, and cited wording uses
+`‘…’`.
 
 If any chapter is not `final`, list it and ask for confirmation before publishing unless the author explicitly requests a draft or proof EPUB.
 
@@ -78,12 +100,27 @@ python3 .agents/skills/publish-novel/scripts/build_epub.py \
 
 The script must:
 
-- render numbered chapter Markdown in filename order;
+- render only each numbered chapter's `## Draft` content in filename order;
+- fail before staging changes when the exact H2 sequence differs or Draft is
+  missing, duplicated, or empty;
+- exclude the title-container H1, Synopsis, and Revision Notes from manuscript
+  rendering, while adding the canonical chapter title from frontmatter;
+- render ordinary Markdown paragraphs as `p.prose` in a sans-serif stack and
+  each canonical `*“…”*` speech range as `<i class="dialog">`, styled with a
+  serif italic stack without forcing a paragraph boundary;
+- render a standalone `---` or legacy Markdown thematic break as a semantic
+  `<hr class="scene-break" />` paired with visible centered `* * *` text before
+  list parsing;
+- treat legacy thematic-break rendering as defensive compatibility only;
+  canonical Draft source must use standalone `---` and pass the strict audit;
+- use reader-compatible CSS with no external font or stylesheet dependency;
 - ignore template files;
 - package block and inline local images;
 - include the selected cover when present;
 - keep staging inside `published/epub/` by default;
-- write `published/novel.epub` by default;
+- retain that staging tree after packaging;
+- write `published/novel.epub` by default as a ZIP-compatible EPUB container;
+- write `mimetype` as the archive's first, uncompressed member;
 - validate the final archive automatically.
 
 ### 5. Verify And Report
@@ -96,6 +133,13 @@ Require the script's successful validation report. It checks:
 - at least one rendered chapter;
 - well-formed XML and XHTML;
 - packaged targets for local `href` and `src` references.
+
+Also inspect the generated chapter XHTML when changing the publisher or chapter
+markup rules. Confirm that editorial headings and text from Synopsis or Revision
+Notes are absent; every marked speech range becomes `<i class="dialog">` even
+when narration follows in the same paragraph; unmarked thought remains `<em>`;
+and each scene break has a visible centered `* * *` ornament instead of being
+emitted as a list.
 
 To validate an existing artifact without rebuilding, run:
 
@@ -111,6 +155,7 @@ Report:
 - title, author, and language used;
 - chapter and packaged-image counts;
 - whether a cover was included;
+- confirmation that the staging tree was retained alongside the final EPUB;
 - any warnings or intentionally accepted draft conditions.
 
 Run `git status --short` and separate generated ignored output from source changes. Do not commit `published/*.epub` or `published/epub/` unless the author explicitly asks.
@@ -118,6 +163,7 @@ Run `git status --short` and separate generated ignored output from source chang
 ## Failure Handling
 
 - Stop when no publishable chapter exists.
+- Stop when a chapter has no unique, non-empty `## Draft` section.
 - Stop when a referenced local image is missing.
 - Stop when the cover path is invalid.
 - Stop when staging points outside a generated subdirectory of `published/`.

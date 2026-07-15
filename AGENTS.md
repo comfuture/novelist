@@ -170,6 +170,9 @@ The intended publishing flow is:
 3. Rendered intermediate files are written to `published/`.
 4. The local `$publish-novel` skill runs its bundled packaging script and validates the final `.epub` generated through staging under `published/`.
 
-Do not treat `.epub` output as editable source. If the book needs changes, update source files first, then regenerate.
+Keep both generated forms: `published/epub/` is the inspectable staging tree,
+and `published/*.epub` is the ZIP-based container opened by reading software.
+Do not treat either as editable source. If the book needs changes, update source
+files first, then regenerate.
 
 Use the local `$publish-novel` skill to generate and validate EPUB output. The author should request publication with a prompt; the skill runs its bundled script internally.

@@ -24,6 +24,12 @@ from urllib.parse import urlsplit
 CHAPTER_RE = re.compile(r"^[0-9]{3}\.[a-z0-9]+(?:-[a-z0-9]+)*\.md$")
 IMAGE_RE = re.compile(r"!\[([^\]]*)\]\(([^)]+)\)")
 LINK_RE = re.compile(r"\[([^\]]+)\]\(([^)]+)\)")
+H2_LINE_RE = re.compile(r"^##(?!#)[ \t]+(.+?)[ \t]*$")
+FENCE_LINE_RE = re.compile(r"^(`{3,}|~{3,})")
+THEMATIC_BREAK_RE = re.compile(
+    r"^(?:(?:-[ \t]*){3,}|(?:\*[ \t]*){3,}|(?:_[ \t]*){3,})$"
+)
+DIALOGUE_SPAN_RE = re.compile(r"(?<!\*)\*“([^“”]+)”\*(?!\*)")
 COVER_CANDIDATES = ("cover.png", "cover.jpg", "cover.jpeg", "cover.webp")
 REQUIRED_EPUB_MEMBERS = {
     "mimetype",
@@ -32,11 +38,14 @@ REQUIRED_EPUB_MEMBERS = {
     "OEBPS/nav.xhtml",
     "OEBPS/styles.css",
 }
+EDITORIAL_HEADINGS = {"Synopsis", "Draft", "Revision Notes"}
+CHAPTER_SECTIONS = ("Synopsis", "Draft", "Revision Notes")
 
 
 @dataclass
 class Chapter:
     source: Path
+    number: int
     title: str
     body: str
     output_name: str
@@ -124,6 +133,56 @@ def title_from_filename(path: Path) -> str:
     return stem.replace("-", " ").title()
 
 
+def scan_h2_headings(body: str) -> list[tuple[str, int, int]]:
+    """Return exact H2 headings outside fenced code with source offsets."""
+    headings: list[tuple[str, int, int]] = []
+    fence_char: str | None = None
+    offset = 0
+    for raw_line in body.splitlines(keepends=True):
+        line = raw_line.rstrip("\r\n")
+        fence = FENCE_LINE_RE.match(line)
+        if fence:
+            marker_char = fence.group(1)[0]
+            if fence_char is None:
+                fence_char = marker_char
+            elif fence_char == marker_char:
+                fence_char = None
+            offset += len(raw_line)
+            continue
+        if fence_char is None:
+            heading = H2_LINE_RE.fullmatch(line)
+            if heading:
+                headings.append((heading.group(1).strip(), offset, offset + len(raw_line)))
+        offset += len(raw_line)
+    return headings
+
+
+def extract_draft_section(body: str, source: Path) -> str:
+    """Return the sole publishable Draft section from a chapter body."""
+    headings = scan_h2_headings(body)
+    draft_indexes = [index for index, heading in enumerate(headings) if heading[0] == "Draft"]
+    if len(draft_indexes) != 1:
+        raise SystemExit(
+            "Chapter must contain exactly one publishable ## Draft section "
+            f"(found {len(draft_indexes)}): {source}"
+        )
+    heading_titles = [heading[0] for heading in headings]
+    if heading_titles != list(CHAPTER_SECTIONS):
+        actual = ", ".join(heading_titles) or "none"
+        raise SystemExit(
+            "Chapter H2 sections must be exactly Synopsis, Draft, then Revision Notes "
+            f"(found: {actual}): {source}"
+        )
+
+    draft_index = draft_indexes[0]
+    start = headings[draft_index][2]
+    end = headings[draft_index + 1][1] if draft_index + 1 < len(headings) else len(body)
+    draft = body[start:end].strip()
+    if not draft:
+        raise SystemExit(f"Chapter ## Draft section is empty: {source}")
+    return draft
+
+
 def discover_chapters(chapters_dir: Path) -> list[Chapter]:
     files = [
         path
@@ -133,9 +192,18 @@ def discover_chapters(chapters_dir: Path) -> list[Chapter]:
     chapters: list[Chapter] = []
     for index, path in enumerate(sorted(files), 1):
         frontmatter, body = load_markdown(path)
+        filename_number = int(path.name[:3])
+        try:
+            number = int(frontmatter.get("number", filename_number))
+        except (TypeError, ValueError) as exc:
+            raise SystemExit(f"Chapter number is invalid: {path}") from exc
+        if number != filename_number:
+            raise SystemExit(f"Chapter number does not match filename: {path}")
         title = str(frontmatter.get("title") or first_heading(body) or title_from_filename(path))
         output_name = f"chapter-{index:03d}.xhtml"
-        chapters.append(Chapter(path, title, body, output_name))
+        chapters.append(
+            Chapter(path, number, title, extract_draft_section(body, path), output_name)
+        )
     return chapters
 
 
@@ -221,6 +289,7 @@ def resolve_local_image(
 
 def render_inlines(text: str, resolve_image: Any | None = None) -> str:
     image_tokens: dict[str, str] = {}
+    code_tokens: dict[str, str] = {}
 
     def replace_image(match: re.Match[str]) -> str:
         if resolve_image is None:
@@ -235,15 +304,27 @@ def render_inlines(text: str, resolve_image: Any | None = None) -> str:
         return token
 
     text = IMAGE_RE.sub(replace_image, text)
+
+    def replace_code(match: re.Match[str]) -> str:
+        token = f"\ue001code-{len(code_tokens)}\ue001"
+        code_tokens[token] = f"<code>{html.escape(match.group(1))}</code>"
+        return token
+
+    text = re.sub(r"`([^`\n]+)`", replace_code, text)
     escaped = html.escape(text, quote=True)
-    escaped = re.sub(r"`([^`]+)`", r"<code>\1</code>", escaped)
     escaped = re.sub(r"\*\*([^*]+)\*\*", r"<strong>\1</strong>", escaped)
+    escaped = DIALOGUE_SPAN_RE.sub(
+        r'<i class="dialog">“\1”</i>',
+        escaped,
+    )
     escaped = re.sub(r"(?<!\*)\*([^*]+)\*(?!\*)", r"<em>\1</em>", escaped)
     escaped = LINK_RE.sub(
         lambda match: f'<a href="{html.escape(match.group(2), quote=True)}">{match.group(1)}</a>',
         escaped,
     )
     for token, replacement in image_tokens.items():
+        escaped = escaped.replace(token, replacement)
+    for token, replacement in code_tokens.items():
         escaped = escaped.replace(token, replacement)
     return escaped
 
@@ -281,7 +362,8 @@ def render_markdown(
 
     def flush_paragraph() -> None:
         if paragraph:
-            html_lines.append(f"<p>{inline(' '.join(paragraph))}</p>")
+            paragraph_text = " ".join(paragraph)
+            html_lines.append(f'<p class="prose">{inline(paragraph_text)}</p>')
             paragraph.clear()
 
     for raw_line in body.splitlines():
@@ -305,6 +387,17 @@ def render_markdown(
         if not stripped:
             flush_paragraph()
             close_list()
+            continue
+
+        if THEMATIC_BREAK_RE.fullmatch(stripped):
+            flush_paragraph()
+            close_list()
+            html_lines.append(
+                '<div class="scene-break-wrap" role="separator">'
+                '<hr class="scene-break" />'
+                '<span class="scene-ornament" aria-hidden="true">* * *</span>'
+                "</div>"
+            )
             continue
 
         image_match = IMAGE_RE.fullmatch(stripped)
@@ -362,7 +455,11 @@ def render_markdown(
     return "\n".join(html_lines)
 
 
-def xhtml_page(title: str, body_html: str, language: str) -> str:
+def chapter_number_label(number: int, language: str) -> str:
+    return f"제{number}장" if language.lower().startswith("ko") else f"Chapter {number}"
+
+
+def xhtml_page(number: int, title: str, body_html: str, language: str) -> str:
     return f'''<?xml version="1.0" encoding="utf-8"?>
 <!DOCTYPE html>
 <html xmlns="http://www.w3.org/1999/xhtml" xmlns:epub="http://www.idpf.org/2007/ops" xml:lang="{html.escape(language, quote=True)}" lang="{html.escape(language, quote=True)}">
@@ -370,9 +467,15 @@ def xhtml_page(title: str, body_html: str, language: str) -> str:
   <title>{html.escape(title)}</title>
   <link rel="stylesheet" type="text/css" href="../styles.css" />
 </head>
-<body>
-  <section epub:type="chapter">
+<body class="reading-page">
+  <section epub:type="chapter" class="chapter">
+    <header class="chapter-header">
+      <p class="chapter-number">{html.escape(chapter_number_label(number, language))}</p>
+      <h1 class="chapter-title">{html.escape(title)}</h1>
+    </header>
+    <div class="chapter-body">
 {body_html}
+    </div>
   </section>
 </body>
 </html>
@@ -387,7 +490,7 @@ def cover_page(title: str, cover_asset: ImageAsset, language: str) -> str:
   <title>{html.escape(title)} Cover</title>
   <link rel="stylesheet" type="text/css" href="styles.css" />
 </head>
-<body>
+<body class="cover-page">
   <section epub:type="cover" class="cover">
     <img src="images/{html.escape(cover_asset.epub_name, quote=True)}" alt="{html.escape(title, quote=True)} cover" />
   </section>
@@ -410,8 +513,9 @@ def nav_page(title: str, chapters: list[Chapter], has_cover: bool, language: str
 <html xmlns="http://www.w3.org/1999/xhtml" xmlns:epub="http://www.idpf.org/2007/ops" xml:lang="{html.escape(language, quote=True)}" lang="{html.escape(language, quote=True)}">
 <head>
   <title>{html.escape(title)} Navigation</title>
+  <link rel="stylesheet" type="text/css" href="styles.css" />
 </head>
-<body>
+<body class="toc-page">
   <nav epub:type="toc" id="toc">
     <h1>{html.escape(title)}</h1>
     <ol>
@@ -475,16 +579,97 @@ def content_opf(
 
 
 def stylesheet() -> str:
-    return """body {
-  font-family: serif;
-  line-height: 1.65;
-  margin: 5%;
+    return """html {
+  -webkit-text-size-adjust: 100%;
+  text-size-adjust: 100%;
 }
-h1, h2, h3 {
-  line-height: 1.25;
+body {
+  font-family: -apple-system, BlinkMacSystemFont, "Apple SD Gothic Neo",
+    "Noto Sans CJK KR", "Noto Sans KR", "Malgun Gothic", sans-serif;
+  font-size: 1em;
+  line-break: strict;
+  line-height: 1.78;
+  margin: 0;
+  overflow-wrap: break-word;
+  padding: 0 5%;
+  word-break: keep-all;
+  word-wrap: break-word;
+}
+.chapter {
+  margin: 0 auto;
+  max-width: 42em;
+}
+.chapter-header {
+  break-after: avoid-page;
+  margin: 0 0 3em;
+  padding-top: 3.8em;
+  page-break-after: avoid;
+  text-align: center;
+}
+.chapter-number {
+  font-size: 0.72em;
+  letter-spacing: 0.14em;
+  margin: 0 0 0.9em;
+  text-indent: 0;
+}
+.chapter-title {
+  font-family: "AppleMyungjo", "Noto Serif CJK KR", "Noto Serif KR",
+    "Nanum Myeongjo", "Batang", serif;
+  font-size: 1.75em;
+  font-weight: normal;
+  letter-spacing: 0.06em;
+  line-height: 1.35;
+  margin: 0;
+}
+.chapter-body p {
+  margin: 0 0 0.72em;
+  orphans: 2;
+  text-align: justify;
+  text-indent: 1em;
+  widows: 2;
+}
+.chapter-body i.dialog {
+  font-family: "AppleMyungjo", "Noto Serif CJK KR", "Noto Serif KR",
+    "Nanum Myeongjo", "Batang", serif;
+  font-style: italic;
+  letter-spacing: 0.01em;
+}
+.chapter-body > p:first-child,
+.scene-break-wrap + p {
+  text-indent: 0;
+}
+.scene-break-wrap {
+  break-inside: avoid;
+  margin: 2.4em 0;
+  page-break-inside: avoid;
+  text-align: center;
+}
+.scene-break {
+  border: 0;
+  height: 0;
+  margin: 0;
+  padding: 0;
+}
+.scene-ornament {
+  display: block;
+  font-family: "AppleMyungjo", "Noto Serif CJK KR", "Noto Serif KR", serif;
+  font-size: 0.9em;
+  font-style: normal;
+  letter-spacing: 0.3em;
+  line-height: 1;
+}
+strong {
+  font-weight: 600;
+}
+code {
+  font-family: "SFMono-Regular", Consolas, "Liberation Mono", monospace;
+  font-size: 0.88em;
+  overflow-wrap: anywhere;
 }
 figure {
-  margin: 1.5em 0;
+  break-inside: avoid;
+  margin: 1.8em 0;
+  page-break-inside: avoid;
   text-align: center;
 }
 img {
@@ -501,7 +686,37 @@ img {
   text-align: center;
 }
 .cover img {
+  display: block;
+  margin: 0 auto;
   max-height: 100vh;
+}
+.cover-page {
+  margin: 0;
+  padding: 0;
+}
+.toc-page {
+  font-family: "AppleMyungjo", "Noto Serif CJK KR", "Noto Serif KR", serif;
+  padding: 2em 8%;
+}
+.toc-page h1 {
+  font-size: 1.5em;
+  font-weight: normal;
+  margin: 0 0 1.8em;
+  text-align: center;
+}
+.toc-page ol {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+.toc-page li {
+  border-bottom: 1px solid currentColor;
+  margin: 0;
+  padding: 0.65em 0;
+}
+.toc-page a {
+  color: inherit;
+  text-decoration: none;
 }
 """
 
@@ -580,14 +795,112 @@ def validate_epub(path: Path) -> dict[str, int]:
         if not chapter_members:
             raise SystemExit("EPUB contains no rendered chapter documents")
 
+        dialogue_count = 0
+        scene_break_count = 0
         xml_members = [
             name for name in members if name.endswith((".xhtml", ".opf", ".xml"))
         ]
         for name in xml_members:
+            xml_bytes = epub.read(name)
             try:
-                root = ET.fromstring(epub.read(name))
+                root = ET.fromstring(xml_bytes)
             except ET.ParseError as exc:
                 raise SystemExit(f"EPUB XML is not well formed in {name}: {exc}") from exc
+            if name in chapter_members:
+                elements = list(root.iter())
+                leaked_headings = {
+                    "".join(element.itertext()).strip()
+                    for element in elements
+                    if element.tag.rsplit("}", 1)[-1] == "h2"
+                    and "".join(element.itertext()).strip() in EDITORIAL_HEADINGS
+                }
+                if leaked_headings:
+                    leaked = ", ".join(sorted(leaked_headings))
+                    raise SystemExit(
+                        f"EPUB chapter contains editorial section headings in {name}: {leaked}"
+                    )
+                if b"<li><em> </em></li>" in xml_bytes:
+                    raise SystemExit(
+                        f"EPUB chapter contains a scene break rendered as a list in {name}"
+                    )
+                chapter_numbers = [
+                    element
+                    for element in elements
+                    if element.tag.rsplit("}", 1)[-1] == "p"
+                    and element.attrib.get("class") == "chapter-number"
+                ]
+                chapter_titles = [
+                    element
+                    for element in elements
+                    if element.tag.rsplit("}", 1)[-1] == "h1"
+                    and element.attrib.get("class") == "chapter-title"
+                ]
+                chapter_bodies = [
+                    element
+                    for element in elements
+                    if element.tag.rsplit("}", 1)[-1] == "div"
+                    and element.attrib.get("class") == "chapter-body"
+                ]
+                if not (
+                    len(chapter_numbers) == len(chapter_titles) == len(chapter_bodies) == 1
+                ):
+                    raise SystemExit(
+                        f"EPUB chapter is missing canonical number, title, or body markup in {name}"
+                    )
+
+                paragraphs = [
+                    element
+                    for element in elements
+                    if element.tag.rsplit("}", 1)[-1] == "p"
+                    and element.attrib.get("class") == "prose"
+                ]
+                for paragraph in paragraphs:
+                    paragraph_text = "".join(paragraph.itertext()).strip()
+                    dialogue_spans = [
+                        element
+                        for element in paragraph.iter()
+                        if element.tag.rsplit("}", 1)[-1] == "i"
+                        and element.attrib.get("class") == "dialog"
+                    ]
+                    for dialogue in dialogue_spans:
+                        dialogue_text = "".join(dialogue.itertext()).strip()
+                        if not re.fullmatch(r"“[^“”]+”", dialogue_text):
+                            raise SystemExit(
+                                f"EPUB dialogue lacks canonical italic markup or quotes in {name}"
+                            )
+                        dialogue_count += 1
+                    if (
+                        paragraph_text.count("“") != len(dialogue_spans)
+                        or paragraph_text.count("”") != len(dialogue_spans)
+                    ):
+                        raise SystemExit(
+                            f"EPUB prose contains unclassified dialogue quotes in {name}"
+                        )
+
+                scene_breaks = [
+                    element
+                    for element in elements
+                    if element.tag.rsplit("}", 1)[-1] == "div"
+                    and element.attrib.get("class") == "scene-break-wrap"
+                ]
+                for scene_break in scene_breaks:
+                    children = list(scene_break)
+                    has_rule = any(
+                        child.tag.rsplit("}", 1)[-1] == "hr"
+                        and child.attrib.get("class") == "scene-break"
+                        for child in children
+                    )
+                    has_ornament = any(
+                        child.tag.rsplit("}", 1)[-1] == "span"
+                        and child.attrib.get("class") == "scene-ornament"
+                        and "".join(child.itertext()).strip() == "* * *"
+                        for child in children
+                    )
+                    if not has_rule or not has_ornament:
+                        raise SystemExit(
+                            f"EPUB scene break lacks its semantic rule or visible ornament in {name}"
+                        )
+                    scene_break_count += 1
             for element in root.iter():
                 for attribute in ("href", "src"):
                     raw_target = element.attrib.get(attribute)
@@ -597,12 +910,25 @@ def validate_epub(path: Path) -> dict[str, int]:
                     if target and target not in member_set:
                         raise SystemExit(f"EPUB reference from {name} is missing: {raw_target}")
 
+        css = epub.read("OEBPS/styles.css").decode("utf-8")
+        required_style_rules = (
+            ".chapter-body i.dialog",
+            ".chapter-body p",
+            ".scene-ornament",
+        )
+        if any(rule not in css for rule in required_style_rules):
+            raise SystemExit("EPUB stylesheet is missing canonical reading styles")
+        if "@import" in css or "url(" in css:
+            raise SystemExit("EPUB stylesheet must not depend on external styles or fonts")
+
         image_members = [name for name in members if name.startswith("OEBPS/images/")]
         return {
             "bytes": path.stat().st_size,
             "chapters": len(chapter_members),
+            "dialogue": dialogue_count,
             "images": len(image_members),
             "members": len(members),
+            "scene_breaks": scene_break_count,
         }
 
 
@@ -659,7 +985,7 @@ def build(args: argparse.Namespace) -> Path:
         )
         write_text(
             staging_dir / "OEBPS" / "chapters" / chapter.output_name,
-            xhtml_page(chapter.title, body_html, language),
+            xhtml_page(chapter.number, chapter.title, body_html, language),
         )
 
     image_list = list(image_assets.values())

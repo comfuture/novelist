@@ -98,12 +98,21 @@ Do not begin prose until unresolved contradictions or required canon decisions a
 
 ## EPUB Output
 
-The `$publish-novel` skill's bundled script reads `chapters/*.md` in filename order, renders Markdown to XHTML, copies referenced local images into the EPUB package, includes a cover when available, and writes:
+The `$publish-novel` skill's bundled script reads `chapters/*.md` in filename
+order and renders only each chapter's `## Draft` section to XHTML. The chapter
+H1, Synopsis, and Revision Notes remain editorial source and are never included
+in the book. The script copies local images referenced from Draft, includes a
+cover when available, renders prose in sans serif and each exact `*“…”*` speech
+range as `<i class="dialog">` in serif italics without changing Markdown
+paragraph boundaries, and displays a standalone `---` as a centered `* * *`
+scene ornament. It writes:
 
-- intermediate EPUB files to `published/epub/`
-- final EPUB to `published/novel.epub`
+- an inspectable intermediate EPUB tree to `published/epub/`
+- the ZIP-based reader artifact to `published/novel.epub`
 
-Generated EPUB output is ignored by Git by default. To change the book, edit source files first, then ask `$publish-novel` to republish it.
+Both generated forms are retained after publication and ignored by Git by
+default. To change the book, edit source files first, then ask `$publish-novel`
+to republish it.
 
 ## Publish Prompt
 
@@ -115,4 +124,6 @@ Use $publish-novel to publish the current novel as an EPUB.
 Read project.md and the publishable chapters, confirm the publication title, author or pen name, language, and cover, and warn me if any chapter is not final. If no cover exists, ask whether I want to create one with $create-visual-asset or continue without one. Then run the skill's bundled packaging script, validate the resulting EPUB, and report the final path, chapter count, packaged image count, and whether a cover was included.
 ```
 
-By default, the skill writes intermediate files to `published/epub/` and the final artifact to `published/novel.epub`. Generated output remains ignored by Git unless explicitly added.
+By default, the skill retains intermediate files in `published/epub/` and the
+final reader artifact in `published/novel.epub`. Generated output remains
+ignored by Git unless explicitly added.
