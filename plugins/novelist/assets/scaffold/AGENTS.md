@@ -25,10 +25,7 @@ The canonical manuscript source is `chapters/`. Rendered output belongs in `publ
 - `assets/`: project-bound cover and illustration image assets.
 - `chapters/`: actual chapter manuscript files, sorted by filename.
 - `published/`: generated render output only. Do not treat this as canonical source.
-- `.agents/skills/`: repository-scoped Agent Skills for repeatable novel-writing workflows.
-- `.agents/plugins/marketplace.json`: repository marketplace entry for the Novelist plugin.
-- `plugins/novelist/`: installable Codex plugin with synchronized skills and scaffold assets.
-- `scripts/sync_novelist_plugin.py`: synchronization and drift check for plugin payloads.
+- Novelist plugin: installed Agent Skills for repeatable novel-writing workflows.
 
 ## Markdown And Frontmatter Rules
 
@@ -158,18 +155,13 @@ If possible, use subagents for independent work such as continuity checks, outli
 
 Keep delegated tasks concrete and non-overlapping. Do not let multiple agents edit the same source file at the same time.
 
-## Local Skills
+## Plugin Skills
 
-Project-specific reusable skills live in `.agents/skills/` so they are repository-scoped and portable to Codex-compatible Agent Skills tooling. Prefer this location over `.codex/skills` for checked-in project skills.
-
-Before handling repeatable novel-building work, check `.agents/skills/` for a matching local skill and use it when applicable. Prefer these project skills for creating or refining characters, settings, plots, materials, MacGuffins, outlines, style guides, visual assets, publication, and chapter-related source files.
-
-The shared writing skills in `.agents/skills/` are canonical. Do not edit their
-copies under `plugins/novelist/skills/` directly. After changing a canonical
-skill or a synchronized scaffold template, run
-`python3 scripts/sync_novelist_plugin.py`, then validate the plugin. The
-plugin-only `create-novel-project` skill is maintained directly under
-`plugins/novelist/skills/`.
+Reusable novel-writing skills are supplied by the installed Novelist plugin.
+Before handling repeatable novel-building work, use the matching plugin skill
+for characters, settings, plots, materials, storytelling, visual assets, or
+publication. Do not vendor a second `.agents/skills/` copy into the project
+unless the author explicitly asks for repository-local skill ownership.
 
 ## Publishing Workflow
 
@@ -178,11 +170,11 @@ The intended publishing flow is:
 1. Source material and manuscript live in Markdown files with frontmatter.
 2. `chapters/*.md` are rendered in filename order.
 3. Rendered intermediate files are written to `published/`.
-4. The local `$publish-novel` skill runs its bundled packaging script and validates the final `.epub` generated through staging under `published/`.
+4. The plugin-provided `$publish-novel` skill runs its bundled packaging script and validates the final `.epub` generated through staging under `published/`.
 
 Keep both generated forms: `published/epub/` is the inspectable staging tree,
 and `published/*.epub` is the ZIP-based container opened by reading software.
 Do not treat either as editable source. If the book needs changes, update source
 files first, then regenerate.
 
-Use the local `$publish-novel` skill to generate and validate EPUB output. The author should request publication with a prompt; the skill runs its bundled script internally.
+Use the plugin-provided `$publish-novel` skill to generate and validate EPUB output. The author should request publication with a prompt; the skill runs its bundled script internally.

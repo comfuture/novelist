@@ -1,0 +1,4 @@
+interface:
+  display_name: "Create Character"
+  short_description: "Create novel character files"
+  default_prompt: "Use $create-character to create a new character for this novel."

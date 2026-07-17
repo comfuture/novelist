@@ -15,27 +15,6 @@ This repository is a minimal scaffold for writing a novel with help from AI agen
 
 The source of truth is Markdown with YAML frontmatter. Story material, planning files, manuscript chapters, visual assets, and EPUB publishing output are kept in separate directories so agents can work on the right layer without confusing draft material with generated output.
 
-## Codex Plugin
-
-The repository also contains an installable Codex plugin at
-`plugins/novelist/`. Its repository marketplace manifest is
-`.agents/plugins/marketplace.json`.
-
-The plugin adds a `create-novel-project` initializer and packages the seven
-repository-local writing skills. Plugin copies are generated from the canonical
-`.agents/skills/` tree, while the initializer's source scaffold is stored under
-`plugins/novelist/assets/scaffold/`.
-
-Synchronize generated plugin content after changing a shared skill or scaffold
-template:
-
-```bash
-python3 scripts/sync_novelist_plugin.py
-python3 scripts/sync_novelist_plugin.py --check
-```
-
-See `plugins/novelist/README.md` for local marketplace installation and usage.
-
 ## Structure
 
 - `project.md`: working title, premise, constraints, and source map.
@@ -50,14 +29,11 @@ See `plugins/novelist/README.md` for local marketplace installation and usage.
 - `assets/illustrations/`: chapter illustrations, spot illustrations, motifs, and references.
 - `chapters/`: manuscript source files such as `001.the-genesis.md`.
 - `published/`: generated EPUB staging files and final EPUB output.
-- `.agents/skills/`: repository-local Agent Skills for repeatable workflows.
-- `.agents/plugins/marketplace.json`: local Codex marketplace metadata.
-- `plugins/novelist/`: installable Codex plugin distribution.
-- `scripts/sync_novelist_plugin.py`: plugin skill and scaffold synchronization.
+- Novelist plugin: installed Agent Skills for repeatable workflows.
 
-## Local Skills
+## Plugin Skills
 
-Use local skills for repeatable novel-building work:
+Use the installed Novelist plugin skills for repeatable novel-building work:
 
 - `$create-setting`: create or refine setting/worldbuilding files in `world/`.
 - `$create-character`: create character files in `characters/`, including naming and gender fields.

@@ -1,0 +1,4 @@
+interface:
+  display_name: "Publish Novel"
+  short_description: "Package and verify the novel as an EPUB"
+  default_prompt: "Use $publish-novel to publish the current novel as a verified EPUB."

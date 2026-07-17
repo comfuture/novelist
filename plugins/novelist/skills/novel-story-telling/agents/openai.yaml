@@ -1,0 +1,4 @@
+interface:
+  display_name: "Novel Story Telling"
+  short_description: "Control reader understanding, novel flow, and continuity"
+  default_prompt: "Use $novel-story-telling to plan the next chapter with a clear reader mental-model progression and continuity-safe handoff."

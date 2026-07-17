@@ -1,0 +1,4 @@
+interface:
+  display_name: "Create Material"
+  short_description: "Create story material files"
+  default_prompt: "Use $create-material to create or refine story material for this novel."

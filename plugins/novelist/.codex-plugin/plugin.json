@@ -1,0 +1,35 @@
+{
+  "name": "novelist",
+  "version": "0.1.0",
+  "description": "Plan, write, illustrate, and publish structured Markdown novels in Codex.",
+  "author": {
+    "name": "comfuture",
+    "url": "https://github.com/comfuture"
+  },
+  "homepage": "https://github.com/comfuture/novelist",
+  "repository": "https://github.com/comfuture/novelist",
+  "keywords": [
+    "novel",
+    "fiction",
+    "writing",
+    "epub",
+    "storytelling"
+  ],
+  "skills": "./skills/",
+  "interface": {
+    "displayName": "Novelist",
+    "shortDescription": "Build continuity-safe novels and validated EPUBs.",
+    "longDescription": "Initialize a Markdown novel workspace, develop settings, characters, materials and plots, control chapter continuity and reader understanding, create visual assets, and package the manuscript as a validated EPUB.",
+    "developerName": "comfuture",
+    "category": "Productivity",
+    "capabilities": [
+      "Interactive",
+      "Write"
+    ],
+    "defaultPrompt": [
+      "Create a new novel workspace and help me define its premise.",
+      "Plan the next chapter with continuity and reader understanding in mind.",
+      "Publish the current manuscript as a validated EPUB."
+    ]
+  }
+}

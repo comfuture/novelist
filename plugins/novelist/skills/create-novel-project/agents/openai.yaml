@@ -1,0 +1,4 @@
+interface:
+  display_name: "Create Novel Project"
+  short_description: "Initialize a structured novel workspace"
+  default_prompt: "Use $create-novel-project to initialize a new novel workspace from the Novelist scaffold."

@@ -1,0 +1,4 @@
+interface:
+  display_name: "Create Plot"
+  short_description: "Create structured novel plot files"
+  default_prompt: "Use $create-plot to create or refine the novel plot."

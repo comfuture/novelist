@@ -1,0 +1,4 @@
+interface:
+  display_name: "Create Visual Asset"
+  short_description: "Create cover and illustration assets"
+  default_prompt: "Use $create-visual-asset to create a cover or illustration for this novel."
