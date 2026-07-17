@@ -20,7 +20,7 @@
   "skills": "./skills/",
   "interface": {
     "displayName": "Novelist",
-    "shortDescription": "Build continuity-safe novels and validated EPUBs.",
+    "shortDescription": "Plan novels and publish EPUBs",
     "longDescription": "Initialize a Markdown novel workspace, develop settings, characters, materials and plots, control chapter continuity and reader understanding, create visual assets, and package the manuscript as a validated EPUB.",
     "developerName": "Changkyun Kim",
     "category": "Productivity",
