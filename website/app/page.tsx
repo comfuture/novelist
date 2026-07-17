@@ -67,15 +67,14 @@ export default function Home() {
 
       <section className="section install" id="install">
         <div>
-          <span className="kicker">Public Git marketplace</span>
-          <h2>Install in two commands.</h2>
+          <span className="kicker">OpenAI-curated marketplace</span>
+          <h2>Install in one command.</h2>
           <p>
-            Add the public Novelist marketplace, install the plugin, then open
-            a new Codex task to begin.
+            Install Novelist from the official marketplace, then open a new
+            Codex task to begin.
           </p>
         </div>
-        <pre aria-label="Installation commands"><code>{`codex plugin marketplace add comfuture/novelist --ref main
-codex plugin add novelist@novelist`}</code></pre>
+        <pre aria-label="Installation command"><code>codex plugin add novelist@openai-curated</code></pre>
       </section>
 
       <section className="section responsibility">

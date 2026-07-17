@@ -21,7 +21,8 @@ test("renders the Novelist landing page and installation path", async () => {
   const html = await response.text();
   assert.match(html, /<title>Novelist — Build continuity-safe novels<\/title>/i);
   assert.match(html, /Keep the whole novel in view/);
-  assert.match(html, /codex plugin marketplace add comfuture\/novelist --ref main/);
+  assert.match(html, /codex plugin add novelist@openai-curated/);
+  assert.doesNotMatch(html, /codex plugin marketplace add/);
   assert.match(html, /Created by Changkyun Kim/);
   assert.doesNotMatch(html, /codex-preview|react-loading-skeleton/);
 });
