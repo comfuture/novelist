@@ -30,6 +30,7 @@ for (const [pathname, heading] of [
   ["/privacy", "Privacy Policy"],
   ["/terms", "Terms of Use"],
   ["/support", "Support"],
+  ["/releases", "Release Notes"],
 ]) {
   test(`renders ${pathname}`, async () => {
     const response = await render(pathname);

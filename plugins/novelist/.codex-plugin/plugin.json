@@ -3,11 +3,13 @@
   "version": "0.1.0",
   "description": "Plan, write, illustrate, and publish structured Markdown novels in Codex.",
   "author": {
-    "name": "comfuture",
-    "url": "https://github.com/comfuture"
+    "name": "Changkyun Kim",
+    "email": "comfuture@gmail.com",
+    "url": "https://novelist.comfuture.chatgpt.site"
   },
-  "homepage": "https://github.com/comfuture/novelist",
+  "homepage": "https://novelist.comfuture.chatgpt.site",
   "repository": "https://github.com/comfuture/novelist",
+  "license": "MIT",
   "keywords": [
     "novel",
     "fiction",
@@ -20,16 +22,22 @@
     "displayName": "Novelist",
     "shortDescription": "Build continuity-safe novels and validated EPUBs.",
     "longDescription": "Initialize a Markdown novel workspace, develop settings, characters, materials and plots, control chapter continuity and reader understanding, create visual assets, and package the manuscript as a validated EPUB.",
-    "developerName": "comfuture",
+    "developerName": "Changkyun Kim",
     "category": "Productivity",
     "capabilities": [
       "Interactive",
       "Write"
     ],
+    "websiteURL": "https://novelist.comfuture.chatgpt.site",
+    "privacyPolicyURL": "https://novelist.comfuture.chatgpt.site/privacy",
+    "termsOfServiceURL": "https://novelist.comfuture.chatgpt.site/terms",
     "defaultPrompt": [
       "Create a new novel workspace and help me define its premise.",
       "Plan the next chapter with continuity and reader understanding in mind.",
       "Publish the current manuscript as a validated EPUB."
-    ]
+    ],
+    "brandColor": "#E85D3F",
+    "composerIcon": "./assets/logo.png",
+    "logo": "./assets/logo.png"
   }
 }

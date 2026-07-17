@@ -97,6 +97,7 @@ codex plugin add novelist@novelist`}</code></pre>
         </div>
         <div className="footerLinks">
           <a href="/support">Support</a>
+          <a href="/releases">Releases</a>
           <a href="/privacy">Privacy</a>
           <a href="/terms">Terms</a>
           <a href="mailto:comfuture@gmail.com">Contact</a>

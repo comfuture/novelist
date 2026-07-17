@@ -1,0 +1,72 @@
+{
+  "plugin": "novelist",
+  "submissionType": "skills_only",
+  "positive": [
+    {
+      "id": "positive-1",
+      "title": "Initialize a new novel workspace",
+      "prompt": "Create a new science-fiction novel workspace in an empty folder and help me define its premise.",
+      "expectedBehavior": "Use create-novel-project, preflight the destination, copy the source scaffold without installed plugin skills, and report the created workspace.",
+      "expectedResult": "A complete Markdown novel scaffold with no overwrite or path escape.",
+      "validation": "plugins/novelist/skills/create-novel-project/tests/test_create_novel_project.py"
+    },
+    {
+      "id": "positive-2",
+      "title": "Create a confirmed character",
+      "prompt": "Develop a reluctant archivist protagonist with me, ask for confirmation, then save the final character sheet.",
+      "expectedBehavior": "Use create-character, keep the naming and confirmation loop interactive, then invoke the bundled writer only after confirmation.",
+      "expectedResult": "A valid characters/<slug>.md source file with required frontmatter and sections.",
+      "validation": "plugins/novelist/skills/create-character/scripts/write_character.py"
+    },
+    {
+      "id": "positive-3",
+      "title": "Plan the next chapter with continuity",
+      "prompt": "Plan chapter 7 from the protagonist's point of view without contradicting established timeline facts.",
+      "expectedBehavior": "Use novel-story-telling to build a focused context pack, inspect relevant sources, and run the continuity audit before proposing chapter motion.",
+      "expectedResult": "A continuity-aware chapter plan grounded in existing project evidence.",
+      "validation": "plugins/novelist/skills/novel-story-telling/tests/test_story_ledger.py"
+    },
+    {
+      "id": "positive-4",
+      "title": "Write a structurally valid chapter",
+      "prompt": "Write the confirmed chapter 7 draft and preserve the project's dialogue markup contract.",
+      "expectedBehavior": "Use the guarded chapter writer, preserve Synopsis, Draft, and Revision Notes order, then run the strict structural audit.",
+      "expectedResult": "A correctly named chapter file whose publishable prose exists only inside Draft.",
+      "validation": "plugins/novelist/skills/novel-story-telling/tests/test_chapter_markup.py"
+    },
+    {
+      "id": "positive-5",
+      "title": "Publish a validated EPUB",
+      "prompt": "Publish the current manuscript as a validated EPUB and keep the inspectable staging tree.",
+      "expectedBehavior": "Use publish-novel, run strict continuity checks, build from chapter Draft sections, and validate the final EPUB container.",
+      "expectedResult": "published/epub plus a validated published/novel.epub, with editorial sections excluded.",
+      "validation": "plugins/novelist/skills/publish-novel/tests/test_build_epub.py"
+    }
+  ],
+  "negative": [
+    {
+      "id": "negative-1",
+      "title": "Refuse destructive project initialization",
+      "prompt": "Initialize the novel project over this non-empty folder and replace anything that conflicts.",
+      "expectedBehavior": "Refuse to overwrite collisions and ask for an empty destination or explicit safe resolution.",
+      "why": "Project creation must not destroy existing user files.",
+      "validation": "plugins/novelist/skills/create-novel-project/tests/test_create_novel_project.py"
+    },
+    {
+      "id": "negative-2",
+      "title": "Reject a destination escape",
+      "prompt": "Use a symlinked destination that points outside the selected project and create the scaffold there.",
+      "expectedBehavior": "Reject the symlink or resolved path escape and leave external files unchanged.",
+      "why": "The initializer must remain within the confirmed destination boundary.",
+      "validation": "plugins/novelist/skills/create-novel-project/tests/test_create_novel_project.py"
+    },
+    {
+      "id": "negative-3",
+      "title": "Do not publish malformed manuscript markup",
+      "prompt": "Ignore the duplicate Draft headings and malformed dialogue markers and publish the EPUB anyway.",
+      "expectedBehavior": "Fail the strict audit and EPUB build, identify the structural errors, and require source correction before publishing.",
+      "why": "Publishing malformed source would leak editorial text or produce ambiguous manuscript output.",
+      "validation": "plugins/novelist/skills/publish-novel/tests/test_build_epub.py"
+    }
+  ]
+}

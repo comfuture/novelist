@@ -36,6 +36,9 @@ python3 scripts/sync_novelist_plugin.py --check
 
 See `plugins/novelist/README.md` for local marketplace installation and usage.
 
+Public documentation, support, privacy terms, and release notes are available
+at [novelist.comfuture.chatgpt.site](https://novelist.comfuture.chatgpt.site).
+
 ## Structure
 
 - `project.md`: working title, premise, constraints, and source map.

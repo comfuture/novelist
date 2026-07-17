@@ -16,6 +16,16 @@ codex plugin add novelist@novelist
 
 Start a new Codex task after installation so the plugin skills are loaded.
 
+## Public Information
+
+- Website: https://novelist.comfuture.chatgpt.site
+- Support: https://novelist.comfuture.chatgpt.site/support
+- Privacy policy: https://novelist.comfuture.chatgpt.site/privacy
+- Terms of use: https://novelist.comfuture.chatgpt.site/terms
+- Release notes: https://novelist.comfuture.chatgpt.site/releases
+- Contact: Changkyun Kim <comfuture@gmail.com>
+- License: MIT
+
 ## Included Skills
 
 - `create-novel-project`
