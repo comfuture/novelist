@@ -1,6 +1,6 @@
 ---
 name: create-visual-asset
-description: Create cover and illustration image assets for this novel project using the built-in image generation workflow. Use when the user wants to plan, generate, refine, or save a book cover, chapter illustration, spot illustration, visual motif, or image prompt while preserving a consistent visual style across assets.
+description: Create cover and illustration image assets for this novel project with an available raster image provider. Use when the user wants to plan, generate, refine, or save a book cover, chapter illustration, spot illustration, visual motif, or image prompt while preserving a consistent visual style across assets.
 ---
 
 # Create Visual Asset
@@ -9,7 +9,18 @@ description: Create cover and illustration image assets for this novel project u
 
 Use this skill to create project-bound cover and illustration assets for the novel.
 
-Always preserve visual consistency by reading `style/visual-style-guide.md` first. Use the built-in image generation skill/tool for raster image generation. Save final project-bound assets under `assets/cover/` or `assets/illustrations/`; never leave a referenced asset only in the image generator's default output location.
+Always preserve visual consistency by reading `style/visual-style-guide.md`
+first. Detect the image-generation capabilities available in the current host,
+then use the matching guide:
+
+- Codex: `references/codex-image-generation.md`
+- Claude Code: `references/claude-image-generation.md`
+- Antigravity CLI: `references/antigravity-image-generation.md`
+- External API or CLI provider: `references/external-image-provider.md`
+
+Save final project-bound assets under `assets/cover/` or
+`assets/illustrations/`; never leave a referenced asset only in a provider's
+default output location.
 
 ## Required Context
 
@@ -71,19 +82,36 @@ Text: no text, no title, no watermark unless explicitly requested
 Avoid: <style guide avoid list plus asset-specific avoid list>
 ```
 
-### 4. Generate With Imagegen
+### 4. Select And Invoke A Raster Provider
 
-Use the built-in image generation path. Do not substitute SVG, HTML, or placeholder art.
+Inspect the tools actually available in the current agent host. Prefer, in
+order:
+
+1. a verified built-in raster image generator;
+2. a configured image-generation MCP server or agent tool;
+3. an author-approved external API or CLI adapter.
+
+Do not infer image-generation capability from image input, image analysis, or
+generic file tools. Do not substitute SVG, HTML, or placeholder art.
 
 For project-bound assets:
 
-1. Generate the image with the built-in image generation workflow.
+1. Generate the image with the selected raster provider.
 2. Inspect the result for style, subject, composition, and continuity.
 3. Iterate only with targeted changes.
 4. Move or copy the final selected image into the project:
    - cover: `assets/cover/<slug>.<ext>`
    - chapter illustration, spot illustration, motif, or reference: `assets/illustrations/<slug>.<ext>`
 5. Report the saved path and final prompt.
+
+If no raster provider is available:
+
+1. say clearly that no image was generated;
+2. return the complete style-locked prompt without shortening it;
+3. link the relevant host guide and
+   `references/external-image-provider.md`;
+4. offer to continue after the author connects a provider;
+5. do not create a fake asset or register a nonexistent image in Markdown.
 
 ### 5. Register In Markdown
 

@@ -80,7 +80,10 @@ Find a cover in this order:
 2. `cover_image` in `project.md` frontmatter;
 3. `assets/cover/cover.png`, `.jpg`, `.jpeg`, or `.webp`.
 
-If no cover exists, ask whether to create one or publish without one. When the author wants a cover, use `$create-visual-asset`, save it under `assets/cover/`, verify the final image, and resume publication. Do not block a coverless publication after the author confirms that choice.
+If no cover exists, ask whether to create one or publish without one. When the
+author wants a cover, use the `create-visual-asset` skill, save it under
+`assets/cover/`, verify the final image, and resume publication. Do not block a
+coverless publication after the author confirms that choice.
 
 ### 4. Publish
 
