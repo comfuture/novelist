@@ -8,7 +8,10 @@ updated: 2026-07-15
 
 ## Project Purpose
 
-This repository is a source workspace for writing a novel. Treat every Markdown file outside this file as source material or manuscript input for the final book.
+This repository is a source workspace for writing a novel. Treat Markdown files
+under the story-source directories as source material or manuscript input for
+the final book. Documentation files named `README.md`, `AGENTS.md`, and
+`CLAUDE.md` are instructions rather than indexed story sources.
 
 The canonical manuscript source is `chapters/`. Rendered output belongs in `published/` and is used later to produce the final `.epub`.
 
@@ -170,11 +173,13 @@ The intended publishing flow is:
 1. Source material and manuscript live in Markdown files with frontmatter.
 2. `chapters/*.md` are rendered in filename order.
 3. Rendered intermediate files are written to `published/`.
-4. The plugin-provided `$publish-novel` skill runs its bundled packaging script and validates the final `.epub` generated through staging under `published/`.
+4. The Novelist publication skill runs its bundled packaging script and validates the final `.epub` generated through staging under `published/`.
 
 Keep both generated forms: `published/epub/` is the inspectable staging tree,
 and `published/*.epub` is the ZIP-based container opened by reading software.
 Do not treat either as editable source. If the book needs changes, update source
 files first, then regenerate.
 
-Use the plugin-provided `$publish-novel` skill to generate and validate EPUB output. The author should request publication with a prompt; the skill runs its bundled script internally.
+Ask the available Novelist publication skill to generate and validate EPUB
+output. The exact invocation syntax depends on the current agent host; the
+skill runs its bundled script internally.
