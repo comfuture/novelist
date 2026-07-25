@@ -72,13 +72,20 @@ Run focused tests first, then the complete relevant set:
 
 ```bash
 PYTHONDONTWRITEBYTECODE=1 python3 -m unittest discover -s tests
-PYTHONDONTWRITEBYTECODE=1 python3 -m unittest discover -s plugins/novelist/skills
+PYTHONDONTWRITEBYTECODE=1 python3 -m unittest discover -s plugins/novelist/skills/create-novel-project/tests
+PYTHONDONTWRITEBYTECODE=1 python3 -m unittest discover -s plugins/novelist/skills/create-visual-asset/tests
+PYTHONDONTWRITEBYTECODE=1 python3 -m unittest discover -s plugins/novelist/skills/novel-story-telling/tests
+PYTHONDONTWRITEBYTECODE=1 python3 -m unittest discover -s plugins/novelist/skills/publish-novel/tests
 python3 scripts/sync_novelist_plugin.py --check
 uv run --with PyYAML python /path/to/plugin-creator/scripts/validate_plugin.py plugins/novelist
 claude plugin validate plugins/novelist --strict
 claude plugin validate . --strict
 agy plugin validate plugins/novelist
 ```
+
+These commands run the Python regression suites bundled with the skills. They
+do not attempt to simulate an agent model invoking a skill; installed-host
+discovery and invocation are separate smoke tests.
 
 Validate `.sh` on POSIX and `.ps1` plus `.bat` on native Windows. Test installed
 plugins from isolated host state when practical, and record tool versions when

@@ -41,7 +41,7 @@ class StandaloneEndToEndTests(unittest.TestCase):
         self,
     ) -> None:
         with tempfile.TemporaryDirectory() as temporary_directory:
-            root = Path(temporary_directory)
+            root = Path(temporary_directory).resolve()
             workspace = root / "novel"
             payloads = root / "payloads"
             payloads.mkdir()
