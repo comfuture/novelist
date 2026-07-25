@@ -116,14 +116,18 @@ def build_copy_plan(agent: str) -> list[CopyItem]:
 
 
 def validate_destination(destination: Path) -> None:
+    for candidate in (destination, *destination.parents):
+        if candidate.is_symlink():
+            raise ValueError(
+                f"destination path contains a symbolic-link ancestor: {candidate}"
+            )
+
     resolved_plugin_root = PLUGIN_ROOT.resolve()
     resolved_destination = destination.resolve()
     if resolved_destination == resolved_plugin_root or resolved_destination.is_relative_to(
         resolved_plugin_root
     ):
         raise ValueError("refusing to export inside the Novelist plugin installation")
-    if destination.is_symlink():
-        raise ValueError(f"destination root is a symbolic link: {destination}")
     if destination.exists() and not destination.is_dir():
         raise ValueError(f"destination root is not a directory: {destination}")
 

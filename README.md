@@ -156,7 +156,10 @@ Validate the canonical payload and host adapters:
 ```bash
 python3 scripts/sync_novelist_plugin.py --check
 PYTHONDONTWRITEBYTECODE=1 python3 -m unittest discover -s tests
-PYTHONDONTWRITEBYTECODE=1 python3 -m unittest discover -s plugins/novelist/skills
+PYTHONDONTWRITEBYTECODE=1 python3 -m unittest discover -s plugins/novelist/skills/create-novel-project/tests
+PYTHONDONTWRITEBYTECODE=1 python3 -m unittest discover -s plugins/novelist/skills/create-visual-asset/tests
+PYTHONDONTWRITEBYTECODE=1 python3 -m unittest discover -s plugins/novelist/skills/novel-story-telling/tests
+PYTHONDONTWRITEBYTECODE=1 python3 -m unittest discover -s plugins/novelist/skills/publish-novel/tests
 claude plugin validate plugins/novelist --strict
 claude plugin validate . --strict
 agy plugin validate plugins/novelist

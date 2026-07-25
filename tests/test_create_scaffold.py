@@ -72,7 +72,7 @@ class CreateScaffoldTests(unittest.TestCase):
     def test_each_agent_mode_exports_the_exact_file_set(self) -> None:
         for agent in ("codex", "claude", "antigravity", "all"):
             with self.subTest(agent=agent), tempfile.TemporaryDirectory() as temporary_directory:
-                destination = Path(temporary_directory) / "book"
+                destination = Path(temporary_directory).resolve() / "book"
                 result = self.run_exporter(destination, agent)
 
                 self.assertEqual(result.returncode, 0, result.stdout + result.stderr)
@@ -91,7 +91,7 @@ class CreateScaffoldTests(unittest.TestCase):
 
     def test_exported_files_match_the_canonical_payload(self) -> None:
         with tempfile.TemporaryDirectory() as temporary_directory:
-            destination = Path(temporary_directory) / "book"
+            destination = Path(temporary_directory).resolve() / "book"
             result = self.run_exporter(destination, "all")
             self.assertEqual(result.returncode, 0, result.stdout + result.stderr)
 
@@ -126,7 +126,7 @@ class CreateScaffoldTests(unittest.TestCase):
 
     def test_collision_in_one_layout_writes_nothing_else(self) -> None:
         with tempfile.TemporaryDirectory() as temporary_directory:
-            destination = Path(temporary_directory) / "book"
+            destination = Path(temporary_directory).resolve() / "book"
             collision = destination / ".claude" / "skills" / "create-character" / "SKILL.md"
             collision.parent.mkdir(parents=True)
             collision.write_text("keep me\n", encoding="utf-8")
@@ -142,7 +142,7 @@ class CreateScaffoldTests(unittest.TestCase):
         if not hasattr(os, "link"):
             self.skipTest("hard links are not available")
         with tempfile.TemporaryDirectory() as temporary_directory:
-            temporary_root = Path(temporary_directory)
+            temporary_root = Path(temporary_directory).resolve()
             destination = temporary_root / "book"
             destination.mkdir()
             outside = temporary_root / "outside-project.md"
@@ -164,7 +164,7 @@ class CreateScaffoldTests(unittest.TestCase):
     @unittest.skipIf(os.name == "nt", "symlink creation is not reliably available")
     def test_symlinked_target_is_rejected_before_writing(self) -> None:
         with tempfile.TemporaryDirectory() as temporary_directory:
-            temporary_root = Path(temporary_directory)
+            temporary_root = Path(temporary_directory).resolve()
             destination = temporary_root / "book"
             outside = temporary_root / "outside"
             destination.mkdir()
@@ -178,6 +178,22 @@ class CreateScaffoldTests(unittest.TestCase):
             self.assertFalse((destination / "project.md").exists())
             self.assertEqual(list(outside.iterdir()), [])
 
+    @unittest.skipIf(os.name == "nt", "symlink creation is not reliably available")
+    def test_symlinked_missing_destination_ancestor_is_rejected(self) -> None:
+        with tempfile.TemporaryDirectory() as temporary_directory:
+            temporary_root = Path(temporary_directory).resolve()
+            outside = temporary_root / "outside"
+            outside.mkdir()
+            symlinked_parent = temporary_root / "linked-parent"
+            symlinked_parent.symlink_to(outside, target_is_directory=True)
+            destination = symlinked_parent / "book"
+
+            result = self.run_exporter(destination, "codex", "--force")
+
+            self.assertNotEqual(result.returncode, 0)
+            self.assertIn("symbolic-link ancestor", result.stdout)
+            self.assertEqual(list(outside.iterdir()), [])
+
     def test_destination_inside_plugin_is_rejected(self) -> None:
         destination = PLUGIN_ROOT / "temporary-export-test"
         result = self.run_exporter(destination, "codex")
@@ -188,7 +204,7 @@ class CreateScaffoldTests(unittest.TestCase):
 
     def test_export_is_self_contained_after_creation(self) -> None:
         with tempfile.TemporaryDirectory() as temporary_directory:
-            destination = Path(temporary_directory) / "book"
+            destination = Path(temporary_directory).resolve() / "book"
             result = self.run_exporter(destination, "codex")
             self.assertEqual(result.returncode, 0, result.stdout + result.stderr)
 
@@ -216,7 +232,7 @@ class CreateScaffoldTests(unittest.TestCase):
     @unittest.skipIf(os.name == "nt", "POSIX wrapper test")
     def test_posix_wrapper_passes_arguments_and_exit_status(self) -> None:
         with tempfile.TemporaryDirectory() as temporary_directory:
-            destination = Path(temporary_directory) / "book"
+            destination = Path(temporary_directory).resolve() / "book"
             result = subprocess.run(
                 [
                     "sh",
