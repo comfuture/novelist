@@ -4,11 +4,13 @@ import subprocess
 import sys
 import tempfile
 import unittest
+import shutil
 from datetime import date
 from pathlib import Path
 
 
 SCRIPT = Path(__file__).resolve().parents[1] / "scripts" / "create_novel_project.py"
+PLUGIN_ROOT = Path(__file__).resolve().parents[3]
 
 
 class CreateNovelProjectTests(unittest.TestCase):
@@ -45,6 +47,10 @@ class CreateNovelProjectTests(unittest.TestCase):
             self.assertIn(f"created: {date.today().isoformat()}", project)
             self.assertTrue((destination / "chapters" / "_template.md").is_file())
             self.assertTrue((destination / "published" / ".gitignore").is_file())
+            self.assertEqual(
+                (destination / "CLAUDE.md").read_text(encoding="utf-8").strip(),
+                "@AGENTS.md",
+            )
             self.assertFalse((destination / ".agents" / "skills").exists())
 
     def test_collision_preflight_writes_nothing(self) -> None:
@@ -84,6 +90,49 @@ class CreateNovelProjectTests(unittest.TestCase):
 
             self.assertNotEqual(result.returncode, 0)
             self.assertFalse(destination.exists())
+
+    def test_initializes_from_an_isolated_plugin_copy(self) -> None:
+        with tempfile.TemporaryDirectory() as temporary_directory:
+            temporary_root = Path(temporary_directory)
+            isolated_plugin = temporary_root / "plugin-cache" / "novelist"
+            shutil.copytree(
+                PLUGIN_ROOT,
+                isolated_plugin,
+                ignore=shutil.ignore_patterns("__pycache__", "*.pyc"),
+            )
+            isolated_script = (
+                isolated_plugin
+                / "skills"
+                / "create-novel-project"
+                / "scripts"
+                / "create_novel_project.py"
+            )
+            destination = temporary_root / "book"
+
+            result = subprocess.run(
+                [
+                    sys.executable,
+                    str(isolated_script),
+                    "--project-root",
+                    str(destination),
+                ],
+                check=False,
+                capture_output=True,
+                text=True,
+            )
+
+            self.assertEqual(result.returncode, 0, result.stdout + result.stderr)
+            self.assertTrue((destination / "project.md").is_file())
+            self.assertTrue((destination / "CLAUDE.md").is_file())
+            self.assertFalse((destination / ".agents" / "skills").exists())
+
+    def test_rejects_destination_inside_plugin(self) -> None:
+        destination = PLUGIN_ROOT / "temporary-project-test"
+        result = self.run_initializer(destination)
+
+        self.assertNotEqual(result.returncode, 0)
+        self.assertIn("plugin installation", result.stdout)
+        self.assertFalse(destination.exists())
 
 
 if __name__ == "__main__":
