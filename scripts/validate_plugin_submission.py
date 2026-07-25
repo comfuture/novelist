@@ -55,6 +55,7 @@ def main() -> None:
     run(sys.executable, "scripts/sync_novelist_plugin.py", "--check")
     for tests in (
         "plugins/novelist/skills/create-novel-project/tests",
+        "plugins/novelist/skills/create-visual-asset/tests",
         "plugins/novelist/skills/novel-story-telling/tests",
         "plugins/novelist/skills/publish-novel/tests",
     ):

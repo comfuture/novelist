@@ -1,0 +1,33 @@
+{
+  "$schema": "https://json.schemastore.org/claude-code-marketplace.json",
+  "name": "novelist",
+  "owner": {
+    "name": "Changkyun Kim",
+    "email": "comfuture@gmail.com"
+  },
+  "description": "Agent-assisted workflows for planning and writing continuity-safe Markdown novels.",
+  "version": "0.1.1",
+  "plugins": [
+    {
+      "name": "novelist",
+      "source": "./plugins/novelist",
+      "description": "Manage story assets, apply genre-aware writing strategies, maintain continuity, and publish validated EPUBs.",
+      "version": "0.1.1",
+      "author": {
+        "name": "Changkyun Kim",
+        "email": "comfuture@gmail.com"
+      },
+      "homepage": "https://novelist.comfuture.chatgpt.site",
+      "repository": "https://github.com/comfuture/novelist",
+      "license": "MIT",
+      "keywords": [
+        "novel",
+        "fiction",
+        "writing",
+        "storytelling",
+        "continuity"
+      ],
+      "category": "productivity"
+    }
+  ]
+}

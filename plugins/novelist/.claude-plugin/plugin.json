@@ -1,0 +1,22 @@
+{
+  "$schema": "https://json.schemastore.org/claude-code-plugin-manifest.json",
+  "name": "novelist",
+  "displayName": "Novelist",
+  "version": "0.1.1",
+  "description": "Manage story assets, apply genre-aware writing strategies, maintain continuity, and publish validated EPUBs.",
+  "author": {
+    "name": "Changkyun Kim",
+    "email": "comfuture@gmail.com"
+  },
+  "homepage": "https://novelist.comfuture.chatgpt.site",
+  "repository": "https://github.com/comfuture/novelist",
+  "license": "MIT",
+  "keywords": [
+    "novel",
+    "fiction",
+    "writing",
+    "storytelling",
+    "continuity"
+  ],
+  "skills": "./skills/"
+}

@@ -1,0 +1,5 @@
+{
+  "$schema": "https://antigravity.google/schemas/v1/plugin.json",
+  "name": "novelist",
+  "description": "Manage story assets, apply genre-aware writing strategies, maintain continuity, and publish validated EPUBs."
+}

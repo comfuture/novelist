@@ -1,7 +1,7 @@
 {
   "name": "novelist",
-  "version": "0.1.0",
-  "description": "Plan, write, illustrate, and publish structured Markdown novels in Codex.",
+  "version": "0.1.1",
+  "description": "Manage story assets, apply genre-aware writing strategies, maintain continuity, and publish validated EPUBs.",
   "author": {
     "name": "Changkyun Kim",
     "email": "comfuture@gmail.com",
@@ -20,8 +20,8 @@
   "skills": "./skills/",
   "interface": {
     "displayName": "Novelist",
-    "shortDescription": "Plan novels and publish EPUBs",
-    "longDescription": "Initialize a Markdown novel workspace, develop settings, characters, materials and plots, control chapter continuity and reader understanding, create visual assets, and package the manuscript as a validated EPUB.",
+    "shortDescription": "Write coherent novels across every story asset",
+    "longDescription": "Initialize a Markdown novel workspace, develop settings, characters, materials, plots, and outlines, apply genre-aware storytelling strategies, control continuity and reader understanding, create visual assets, and finish with a validated EPUB.",
     "developerName": "Changkyun Kim",
     "category": "Productivity",
     "capabilities": [

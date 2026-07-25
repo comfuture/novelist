@@ -1,0 +1,69 @@
+name: Validate
+
+on:
+  pull_request:
+  push:
+    branches:
+      - main
+
+jobs:
+  python:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.13"
+      - name: Validate package and standalone export
+        env:
+          PYTHONDONTWRITEBYTECODE: "1"
+        run: python -m unittest discover -s tests
+      - name: Validate plugin skill scripts
+        env:
+          PYTHONDONTWRITEBYTECODE: "1"
+        run: |
+          python -m unittest discover -s plugins/novelist/skills/create-novel-project/tests
+          python -m unittest discover -s plugins/novelist/skills/create-visual-asset/tests
+          python -m unittest discover -s plugins/novelist/skills/novel-story-telling/tests
+          python -m unittest discover -s plugins/novelist/skills/publish-novel/tests
+      - name: Exercise POSIX standalone wrapper
+        run: |
+          sh scripts/create-scaffold.sh \
+            --destination "$RUNNER_TEMP/novelist-posix" \
+            --agent all
+
+  windows-wrappers:
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.13"
+      - name: Exercise PowerShell wrapper
+        shell: pwsh
+        run: |
+          .\scripts\create-scaffold.ps1 `
+            --destination "$env:RUNNER_TEMP\novelist-powershell" `
+            --agent antigravity
+      - name: Exercise Command Prompt wrapper
+        shell: cmd
+        run: >-
+          scripts\create-scaffold.bat
+          --destination "%RUNNER_TEMP%\novelist-cmd"
+          --agent claude
+
+  website:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: website
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22.13.0"
+          cache: npm
+          cache-dependency-path: website/package-lock.json
+      - run: npm ci
+      - run: npm test
+      - run: npm run build

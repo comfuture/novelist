@@ -41,7 +41,8 @@ python3 "<skill-dir>/scripts/create_novel_project.py" \
    `published/.gitignore`. Run `git status --short` when the destination is
    inside a Git repository.
 7. Summarize the created paths and suggest the next relevant plugin skill, such
-   as `$create-setting`, `$create-character`, or `$create-plot`.
+   as `create-setting`, `create-character`, or `create-plot`. Let the host
+   apply its own invocation syntax.
 
 ## Safety Rules
 
