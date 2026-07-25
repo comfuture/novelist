@@ -7,7 +7,7 @@ export default function TermsPage() {
     <main className="legal">
       <a className="back" href="/">← Back to Novelist</a>
       <h1>Terms of Use</h1>
-      <p className="updated">Effective July 17, 2026</p>
+      <p className="updated">Effective July 25, 2026</p>
       <p>
         Novelist is provided under the MIT License. You may use, copy, modify,
         merge, publish, distribute, sublicense, and sell copies subject to the
@@ -29,9 +29,10 @@ export default function TermsPage() {
       </p>
       <h2>Third-party services</h2>
       <p>
-        Codex, model providers, publishing tools, and hosting services are
-        governed by their own terms. You are responsible for complying with
-        those terms when using Novelist with them.
+        Codex, Claude Code, Antigravity, model and image providers, publishing
+        tools, and hosting services are governed by their own terms. You are
+        responsible for complying with those terms when using Novelist with
+        them.
       </p>
       <h2>Contact</h2>
       <p>Questions may be sent to <a href="mailto:comfuture@gmail.com">comfuture@gmail.com</a>.</p>

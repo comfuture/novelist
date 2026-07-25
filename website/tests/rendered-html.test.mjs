@@ -21,8 +21,12 @@ test("renders the Novelist landing page and installation path", async () => {
   const html = await response.text();
   assert.match(html, /<title>Novelist — Build continuity-safe novels<\/title>/i);
   assert.match(html, /Keep the whole novel in view/);
-  assert.match(html, /codex plugin add novelist@openai-curated/);
-  assert.doesNotMatch(html, /codex plugin marketplace add/);
+  assert.match(html, /codex plugin add novelist@openai-curated-remote/);
+  assert.match(html, /claude plugin install novelist@novelist/);
+  assert.match(html, /agy plugin install \.\/plugins\/novelist/);
+  assert.match(html, /create-scaffold\.sh/);
+  assert.match(html, /worldbuilding, characters, materials, plots/);
+  assert.doesNotMatch(html, /A Codex plugin for long-form fiction/);
   assert.match(html, /Created by Changkyun Kim/);
   assert.doesNotMatch(html, /codex-preview|react-loading-skeleton/);
 });
@@ -41,6 +45,15 @@ for (const [pathname, heading] of [
     assert.match(html, /comfuture@gmail\.com/);
   });
 }
+
+test("renders the breaking-layout migration note", async () => {
+  const response = await render("/releases");
+  assert.equal(response.status, 200);
+  const html = await response.text();
+  assert.match(html, /Novelist 0\.1\.1/);
+  assert.match(html, /clone-first scaffold users/);
+  assert.match(html, /MIGRATION\.md/);
+});
 
 test("ships real brand assets and removes the starter preview", async () => {
   await access(new URL("public/logo.png", root));

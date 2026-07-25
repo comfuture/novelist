@@ -1,30 +1,50 @@
-# Novelist Codex Plugin
+# Novelist: Agent-Assisted Novel Writing
 
-Novelist packages the repository's structured fiction-writing workflows as a
-Codex plugin. It provides skills for project initialization, setting, character,
-material and plot creation, whole-novel storytelling, visual assets, and
-validated EPUB publication.
+Novelist manages interconnected Markdown story assets and applies
+genre-specific writing strategies so an agent can help an author write a
+coherent long-form novel. EPUB packaging remains the final integrated delivery
+step.
 
-## Install From This Repository
+## Install
 
-Add the repository marketplace once, then install the plugin:
+### Codex
+
+Published installation:
+
+```bash
+codex plugin add novelist@openai-curated-remote
+```
+
+Local repository installation:
 
 ```bash
 codex plugin marketplace add /absolute/path/to/novelist
 codex plugin add novelist@novelist
 ```
 
-Start a new Codex task after installation so the plugin skills are loaded.
+Start a new Codex task after installation. Invoke skills as
+`$create-character`, `$novel-story-telling`, and so on.
 
-## Public Information
+### Claude Code
 
-- Website: https://novelist.comfuture.chatgpt.site
-- Support: https://novelist.comfuture.chatgpt.site/support
-- Privacy policy: https://novelist.comfuture.chatgpt.site/privacy
-- Terms of use: https://novelist.comfuture.chatgpt.site/terms
-- Release notes: https://novelist.comfuture.chatgpt.site/releases
-- Contact: Changkyun Kim <comfuture@gmail.com>
-- License: MIT
+```bash
+claude plugin marketplace add /absolute/path/to/novelist
+claude plugin install novelist@novelist --scope user
+```
+
+Reload plugins or start a new session. Invoke skills as
+`/novelist:create-character`, `/novelist:novel-story-telling`, and so on.
+
+### Antigravity CLI (`agy`)
+
+```bash
+agy plugin install /absolute/path/to/novelist/plugins/novelist
+agy plugin list
+```
+
+Invoke installed skills by their frontmatter name, such as
+`/create-character` or `/novel-story-telling`. This form was verified with a
+direct installation on `agy 1.1.2`.
 
 ## Included Skills
 
@@ -37,16 +57,39 @@ Start a new Codex task after installation so the plugin skills are loaded.
 - `create-visual-asset`
 - `publish-novel`
 
-`create-novel-project` copies only the source scaffold into the destination.
-It does not vendor a second copy of the installed plugin skills.
+The initializer copies only `assets/scaffold/`. Installed plugin skills remain
+in the host's plugin cache and are not duplicated inside the generated novel.
 
-## Development
+The visual-asset skill selects from capabilities actually present in the host:
+Codex `image_gen`, a configured MCP or CLI tool, or an author-selected external
+provider. When none is available, it preserves the final prompt and does not
+claim that an image exists.
 
-The repository-local `.agents/skills/` tree is canonical for the seven shared
-writing skills. Synchronize it and the source scaffold into this plugin with:
+## Standalone Alternative
+
+Users who do not want to install a plugin can run the repository's
+`scripts/create-scaffold.sh`, `.ps1`, or `.bat` wrapper. Standalone export
+includes the scaffold and seven project-operating skills; the plugin-only
+initializer is intentionally omitted. See the root `README.md` and
+`MIGRATION.md`.
+
+## Development And Validation
+
+This directory is the canonical plugin payload. Shared skills and scaffold
+files are maintained here directly.
 
 ```bash
-python3 scripts/sync_novelist_plugin.py
+python3 scripts/sync_novelist_plugin.py --check
+claude plugin validate plugins/novelist --strict
+agy plugin validate plugins/novelist
 ```
 
-Use `--check` in validation or CI to detect drift without modifying files.
+## Public Information
+
+- Website: https://novelist.comfuture.chatgpt.site
+- Support: https://novelist.comfuture.chatgpt.site/support
+- Privacy policy: https://novelist.comfuture.chatgpt.site/privacy
+- Terms of use: https://novelist.comfuture.chatgpt.site/terms
+- Release notes: https://novelist.comfuture.chatgpt.site/releases
+- Contact: Changkyun Kim <comfuture@gmail.com>
+- License: MIT

@@ -7,9 +7,9 @@ export default function PrivacyPage() {
     <main className="legal">
       <a className="back" href="/">← Back to Novelist</a>
       <h1>Privacy Policy</h1>
-      <p className="updated">Effective July 17, 2026</p>
+      <p className="updated">Effective July 25, 2026</p>
       <p>
-        Novelist is an open-source, skills-only Codex plugin maintained by
+        Novelist is an open-source, agent-assisted writing plugin maintained by
         Changkyun Kim. This policy explains how the plugin and this website
         handle information.
       </p>
@@ -18,8 +18,11 @@ export default function PrivacyPage() {
         The Novelist plugin does not operate an external service, maintain user
         accounts, use analytics, or transmit manuscript content to a server
         controlled by the developer. Its bundled scripts work with files in the
-        local project selected by the user. Codex and any model provider may
-        process content under their own terms and privacy policies.
+        local project selected by the user. Codex, Claude Code, Antigravity,
+        connected image tools, and model providers may process content under
+        their own terms and privacy policies. Optional image providers are
+        selected and configured by the user; the plugin does not receive their
+        API keys.
       </p>
       <h2>Website data</h2>
       <p>
