@@ -84,6 +84,10 @@ Validate `.sh` on POSIX and `.ps1` plus `.bat` on native Windows. Test installed
 plugins from isolated host state when practical, and record tool versions when
 host behavior is version-dependent.
 
+The `website/` tree is maintained and validated through Codex agent workflows.
+Keep it outside the repository-wide GitHub Actions matrix; when website source
+changes, run its local tests and build through the managing agent.
+
 ## Documentation And Releases
 
 Keep root, plugin, generated-workspace, website, migration, and release
