@@ -15,19 +15,19 @@ export async function generateMetadata(): Promise<Metadata> {
   return {
     metadataBase: new URL(origin),
     title: { default: "Novelist — Build continuity-safe novels", template: "%s — Novelist" },
-    description: "Plan, write, illustrate, and publish structured Markdown novels with continuity-safe Codex workflows.",
+    description: "Manage connected Markdown story assets and write continuity-safe novels with genre-aware agent workflows.",
     icons: { icon: "/logo.png", shortcut: "/logo.png", apple: "/logo.png" },
     openGraph: {
       title: "Novelist — Keep the whole novel in view",
-      description: "A Codex plugin for continuity-safe writing and validated EPUB publishing.",
+      description: "An agent-assisted plugin for continuity-safe, genre-aware novel writing.",
       type: "website",
       url: origin,
-      images: [{ url: `${origin}/og.png`, width: 1200, height: 630, alt: "Novelist Codex plugin" }],
+      images: [{ url: `${origin}/og.png`, width: 1200, height: 630, alt: "Novelist writing plugin" }],
     },
     twitter: {
       card: "summary_large_image",
       title: "Novelist — Keep the whole novel in view",
-      description: "A Codex plugin for continuity-safe writing and validated EPUB publishing.",
+      description: "An agent-assisted plugin for continuity-safe, genre-aware novel writing.",
       images: [`${origin}/og.png`],
     },
   };

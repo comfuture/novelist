@@ -6,7 +6,7 @@ const skills = [
   ["Design the plot", "Build conflicts, reversals, reveals, and payoffs."],
   ["Control the story", "Plan chapters around reader understanding and continuity."],
   ["Create visuals", "Develop cover and illustration assets for the project."],
-  ["Publish EPUB", "Package and validate a reader-ready EPUB."],
+  ["Deliver the book", "Package approved Draft content as a validated EPUB."],
 ];
 
 export default function Home() {
@@ -25,12 +25,12 @@ export default function Home() {
       </nav>
 
       <section className="hero" id="top">
-        <div className="eyebrow">A Codex plugin for long-form fiction</div>
+        <div className="eyebrow">An agent-assisted plugin for long-form fiction</div>
         <h1>Keep the whole novel in view.</h1>
         <p className="lede">
-          Novelist turns a Markdown workspace into a continuity-safe writing
-          system—from first premise to validated EPUB—without taking the story
-          away from its author.
+          Novelist connects worldbuilding, characters, materials, plots,
+          outlines, chapters, and reader knowledge in one continuity-safe
+          Markdown writing system.
         </p>
         <div className="actions">
           <a className="button primary" href="#install">Install Novelist</a>
@@ -52,7 +52,7 @@ export default function Home() {
       <section className="section" id="workflows">
         <div className="sectionHeading">
           <span>Eight focused workflows</span>
-          <h2>From blank page to finished book.</h2>
+          <h2>Build the story before delivering the book.</h2>
         </div>
         <div className="skillGrid">
           {skills.map(([title, description], index) => (
@@ -67,14 +67,26 @@ export default function Home() {
 
       <section className="section install" id="install">
         <div>
-          <span className="kicker">OpenAI-curated marketplace</span>
-          <h2>Install in one command.</h2>
+          <span className="kicker">Codex · Claude Code · Antigravity CLI</span>
+          <h2>Use the plugin in your agent.</h2>
           <p>
-            Install Novelist from the official marketplace, then open a new
-            Codex task to begin.
+            Install the shared eight-skill plugin, or create a standalone
+            workspace with repository-local skills.
           </p>
         </div>
-        <pre aria-label="Installation command"><code>codex plugin add novelist@openai-curated</code></pre>
+        <pre aria-label="Installation commands"><code>{`# Codex
+codex plugin add novelist@openai-curated-remote
+
+# Claude Code
+claude plugin marketplace add comfuture/novelist
+claude plugin install novelist@novelist
+
+# Antigravity CLI
+agy plugin install ./plugins/novelist
+# Invoke /create-character
+
+# Standalone snapshot
+sh scripts/create-scaffold.sh --destination ../my-novel --agent all`}</code></pre>
       </section>
 
       <section className="section responsibility">

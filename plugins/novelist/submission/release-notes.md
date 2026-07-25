@@ -1,3 +1,25 @@
+# Novelist 0.1.1 — Agent-Neutral Plugin Packaging
+
+Novelist 0.1.1 keeps the installed plugin's eight-skill writing contract while
+making the plugin payload the canonical source for Codex, Claude Code, and
+Antigravity CLI.
+
+Highlights:
+
+- adds thin Claude Code and Antigravity plugin manifests;
+- removes duplicate root scaffold and skill trees;
+- adds safe POSIX, PowerShell, and Command Prompt standalone exporters for
+  clone-first users;
+- makes visual generation capability-aware and provider-neutral;
+- repositions EPUB publication as the final step of the continuity-safe writing
+  workflow;
+- adds migration guidance for authored repositories that previously used the
+  clone root directly.
+
+This is a breaking repository-layout change for clone-first scaffold users, not
+a breaking change to the installed plugin's novel source or skill contracts.
+Public marketplace publication is handled separately from this source update.
+
 # Novelist 0.1.0 — Initial Public Submission
 
 Novelist packages eight Codex workflows for planning, writing, illustrating,

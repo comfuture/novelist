@@ -1,188 +1,104 @@
----
-type: agent_instructions
-project: novel-project
-created: 2026-06-21
-updated: 2026-07-15
----
 # AGENTS.md
 
-## Project Purpose
+## Repository Purpose
 
-This repository is a source workspace for writing a novel. Treat every Markdown file outside this file as source material or manuscript input for the final book.
+This repository develops and distributes Novelist, an agent-assisted
+novel-writing plugin for Codex, Claude Code, and Antigravity CLI.
 
-The canonical manuscript source is `chapters/`. Rendered output belongs in `published/` and is used later to produce the final `.epub`.
+The repository root is not a novel workspace. The canonical plugin payload is
+`plugins/novelist/`. Generated novel projects come from
+`plugins/novelist/assets/scaffold/`.
 
-## Directory Roles
+## Canonical Sources
 
-- `project.md`: project-level premise, genre, constraints, and source map.
-- `characters/`: character sheets, relationship notes, motivations, secrets, and continuity facts.
-- `materials/`: story material such as motifs, objects, research notes, dialogue seeds, scene seeds, themes, and references.
-- `macguffins/`: MacGuffins, false leads, hidden functions, reveal timing, and resolution notes.
-- `plot/`: plot threads, act structure, conflicts, reversals, reveals, and payoff tracking.
-- `outlines/`: novel, act, sequence, and chapter outlines.
-- `world/`: settings, locations, timelines, rules, institutions, and world-state continuity.
-- `style/`: voice, point of view, tense, prose conventions, recurring terms, and revision preferences.
-- `assets/`: project-bound cover and illustration image assets.
-- `chapters/`: actual chapter manuscript files, sorted by filename.
-- `published/`: generated render output only. Do not treat this as canonical source.
-- `.agents/skills/`: repository-scoped Agent Skills for repeatable novel-writing workflows.
-- `.agents/plugins/marketplace.json`: repository marketplace entry for the Novelist plugin.
-- `plugins/novelist/`: installable Codex plugin with synchronized skills and scaffold assets.
-- `scripts/sync_novelist_plugin.py`: synchronization and drift check for plugin payloads.
+- `plugins/novelist/skills/`: all eight canonical plugin skills.
+- `plugins/novelist/assets/scaffold/`: the canonical generated-workspace
+  scaffold.
+- `plugins/novelist/.codex-plugin/plugin.json`: Codex adapter metadata.
+- `plugins/novelist/.claude-plugin/plugin.json`: Claude Code adapter metadata.
+- `plugins/novelist/plugin.json`: Antigravity CLI adapter metadata.
+- `.agents/plugins/marketplace.json`: Codex repository marketplace.
+- `.claude-plugin/marketplace.json`: Claude Code repository marketplace.
+- `scripts/create_scaffold.py`: canonical standalone scaffold exporter.
+- `scripts/create-scaffold.sh`, `.ps1`, and `.bat`: thin platform entry points.
 
-## Markdown And Frontmatter Rules
+Do not recreate `.agents/skills/` or a novel scaffold at the repository root.
+Do not edit installed plugin cache copies.
 
-All source material files must be Markdown with YAML frontmatter.
+## Adapter Boundaries
 
-Required frontmatter keys for source material:
+Keep shared workflows in `plugins/novelist/skills/`. Do not fork complete skill
+trees by host.
 
-- `id`: stable lowercase identifier, unique across the project.
-- `type`: one of `project`, `documentation`, `character`, `material`, `macguffin`, `plot`, `outline`, `world`, `style_guide`, `chapter`, or `publishing_note`.
-- `title` or `name`: human-readable label.
-- `status`: one of `seed`, `outline`, `draft`, `revision`, `final`, or `archived`.
-- `tags`: YAML array.
-- `created`: ISO date, `YYYY-MM-DD`.
-- `updated`: ISO date, `YYYY-MM-DD`.
+- `skills/*/agents/openai.yaml` is Codex/OpenAI presentation metadata.
+- Claude-specific packaging belongs under `.claude-plugin/`.
+- Antigravity's root `plugin.json` accepts only its documented minimal fields.
+- Host-specific image-generation instructions belong in
+  `create-visual-asset/references/`.
+- The shared visual workflow must stay provider-neutral and must not claim an
+  image was generated when no raster provider is connected.
 
-Keep long prose, summaries, and draft text in the Markdown body. Use frontmatter for indexing, sorting, filtering, and references.
+## Scaffold Contract
 
-Use YAML arrays for links between files, for example:
+Novel source files use Markdown with YAML frontmatter. Documentation files
+named `README.md`, `AGENTS.md`, and `CLAUDE.md` do not need source frontmatter.
 
-```yaml
-characters:
-  - char-protagonist
-materials:
-  - material-red-thread
-macguffins:
-  - macguffin-locked-box
-plot_threads:
-  - plot-main
+The canonical scaffold must remain self-contained inside the plugin. Never add
+runtime reads from the repository root, symlinks, or hardlinks. Preserve:
+
+- collision preflight and explicit `--force` behavior;
+- destination and parent symlink rejection;
+- plugin-installation boundary checks;
+- `AGENTS.md` plus the `CLAUDE.md` import bridge;
+- empty asset directories and generated-output ignore rules.
+
+Standalone exports contain the scaffold plus seven project-operating skills.
+The plugin-only `create-novel-project` initializer is intentionally excluded
+because the standalone exporter has already performed that operation.
+
+## Novel Workflow Compatibility
+
+Do not change the novel source schema, chapter filename contract, chapter
+section order, dialogue markup, continuity authority, or Draft-only EPUB
+rendering unless an issue explicitly requires it.
+
+EPUB publication remains an integrated final step, not the primary product
+definition. Writing and documentation should lead with structured story assets,
+continuity, reader-knowledge control, and genre-aware strategy.
+
+## Validation
+
+Run focused tests first, then the complete relevant set:
+
+```bash
+PYTHONDONTWRITEBYTECODE=1 python3 -m unittest discover -s tests
+PYTHONDONTWRITEBYTECODE=1 python3 -m unittest discover -s plugins/novelist/skills
+python3 scripts/sync_novelist_plugin.py --check
+uv run --with PyYAML python /path/to/plugin-creator/scripts/validate_plugin.py plugins/novelist
+claude plugin validate plugins/novelist --strict
+claude plugin validate . --strict
+agy plugin validate plugins/novelist
 ```
 
-## Chapter Rules
+Validate `.sh` on POSIX and `.ps1` plus `.bat` on native Windows. Test installed
+plugins from isolated host state when practical, and record tool versions when
+host behavior is version-dependent.
 
-Chapter source files live directly under `chapters/`.
+## Documentation And Releases
 
-Use filesystem-compatible filenames in this exact pattern:
+Keep root, plugin, generated-workspace, website, migration, and release
+documentation aligned. Installation choices must appear before development
+details and EPUB examples.
 
-```text
-001.the-genesis.md
-002.second-slug.md
-003.final-slug.md
-```
+Use semantic versions consistently across host manifests. The `0.1.1`
+restructure changes clone-first scaffold usage but preserves the installed
+plugin's core skill contract.
 
-Rules:
-
-- Use three zero-padded digits.
-- Put one dot between the number and slug.
-- Use lowercase ASCII slugs.
-- Use hyphens instead of spaces.
-- Avoid punctuation except the numeric dot and hyphens.
-- Keep the frontmatter `number`, `id`, `title`, and filename in sync.
-- Render chapters in numeric filename order.
-
-Chapter bodies are editorial containers with exactly one title H1 followed by
-`## Synopsis`, `## Draft`, and `## Revision Notes` in that order. Only the
-content inside `## Draft` is publishable manuscript. Synopsis and revision
-notes remain source-only editorial material and must never appear in rendered
-book output.
-
-Inside `## Draft`, keep Markdown semantic and unambiguous:
-
-- Separate paragraphs with one blank line.
-- Write narration as plain paragraphs.
-- Wrap each spoken range as exact `*“…”*`, whether it stands alone or shares a
-  paragraph with narration, as in `*“Approved.”* Rhea said.` Curly double quotes
-  identify speech; the surrounding Markdown emphasis becomes
-  `<i class="dialog">` in EPUB.
-- Let ordinary Markdown paragraph rules decide paragraph boundaries. A blank
-  line creates a new paragraph; dialogue markup never creates one by itself.
-- Reserve unquoted `*…*` for an interior thought. Use `‘…’` for quoted wording,
-  remembered phrasing, or a quotation nested inside speech; do not use `“…”`
-  for non-spoken mentions because the checker treats it as dialogue.
-- Use `**…**` only for strong semantic emphasis. Balance markers on one line.
-- Use inline backticks only for literal machine output, UI labels, filenames,
-  code identifiers, or log text.
-- Mark a scene or time break with `---` on its own line, with a blank line
-  before and after it. Never use `* * *`, which can collide with list syntax.
-- Do not use Markdown lists, blockquotes, or fenced code blocks anywhere inside
-  Draft. H3 through H6 are reserved for genuine manuscript subheadings; never
-  place another H2 inside Draft.
-
-Recommended chapter frontmatter:
-
-```yaml
----
-id: chapter-001
-type: chapter
-number: 1
-title: "The Genesis"
-slug: the-genesis
-status: outline
-pov: ""
-timeline: ""
-setting: ""
-word_target: 2500
-characters: []
-materials: []
-macguffins: []
-plot_threads: []
-outline: ""
-published: false
-created: 2026-06-21
-updated: 2026-06-21
-tags: []
----
-```
-
-## Writing Workflow
-
-Before writing or revising a chapter:
-
-1. Read the relevant files in `characters/`, `materials/`, `macguffins/`, `plot/`, `outlines/`, `world/`, and `style/`.
-2. Check continuity facts before changing a character, timeline, setting, reveal, or MacGuffin.
-3. Update source material files when a chapter introduces a new canonical fact.
-4. Keep scratch ideas in `materials/` with `status: seed` until they become canonical.
-5. Do not hand-edit generated files in `published/` unless explicitly asked.
-
-When editing prose:
-
-- Preserve the author's intended voice unless asked to rewrite style.
-- Prefer minimal edits for continuity, grammar, or clarity.
-- Do not destructively replace substantial draft text without explicit instruction.
-- Summarize newly introduced facts after chapter changes.
+Never commit credentials. Documentation may use `API_KEY` or
+`<PROVIDER>_API_KEY` placeholders only.
 
 ## Subagent Use
 
-If possible, use subagents for independent work such as continuity checks, outline review, style consistency review, or render verification. Reuse already open subagents in subsequent sessions when their context is relevant.
-
-Keep delegated tasks concrete and non-overlapping. Do not let multiple agents edit the same source file at the same time.
-
-## Local Skills
-
-Project-specific reusable skills live in `.agents/skills/` so they are repository-scoped and portable to Codex-compatible Agent Skills tooling. Prefer this location over `.codex/skills` for checked-in project skills.
-
-Before handling repeatable novel-building work, check `.agents/skills/` for a matching local skill and use it when applicable. Prefer these project skills for creating or refining characters, settings, plots, materials, MacGuffins, outlines, style guides, visual assets, publication, and chapter-related source files.
-
-The shared writing skills in `.agents/skills/` are canonical. Do not edit their
-copies under `plugins/novelist/skills/` directly. After changing a canonical
-skill or a synchronized scaffold template, run
-`python3 scripts/sync_novelist_plugin.py`, then validate the plugin. The
-plugin-only `create-novel-project` skill is maintained directly under
-`plugins/novelist/skills/`.
-
-## Publishing Workflow
-
-The intended publishing flow is:
-
-1. Source material and manuscript live in Markdown files with frontmatter.
-2. `chapters/*.md` are rendered in filename order.
-3. Rendered intermediate files are written to `published/`.
-4. The local `$publish-novel` skill runs its bundled packaging script and validates the final `.epub` generated through staging under `published/`.
-
-Keep both generated forms: `published/epub/` is the inspectable staging tree,
-and `published/*.epub` is the ZIP-based container opened by reading software.
-Do not treat either as editable source. If the book needs changes, update source
-files first, then regenerate.
-
-Use the local `$publish-novel` skill to generate and validate EPUB output. The author should request publication with a prompt; the skill runs its bundled script internally.
+Use subagents only when necessary for independent discovery or validation.
+Keep tasks concrete and non-overlapping, and do not let multiple agents edit
+the same file.
