@@ -33,10 +33,11 @@ Codex invokes skills as `$create-character`, `$novel-story-telling`, and so on.
 
 #### Claude Code
 
-Add this repository as a marketplace, install the plugin, and reload plugins:
+Add the public repository as a marketplace, install the plugin, and reload
+plugins:
 
 ```bash
-claude plugin marketplace add /absolute/path/to/novelist
+claude plugin marketplace add comfuture/novelist
 claude plugin install novelist@novelist --scope user
 ```
 
@@ -45,16 +46,20 @@ Claude Code invokes namespaced skills such as
 
 #### Antigravity CLI (`agy`)
 
-Install the plugin directory directly:
+Install the plugin from its public repository:
 
 ```bash
-agy plugin install /absolute/path/to/novelist/plugins/novelist
+agy plugins install https://github.com/comfuture/novelist
 agy plugin list
 ```
 
 Antigravity exposes installed skills by their frontmatter name, for example
-`/create-character` and `/novel-story-telling`. This form was verified against
-the directly installed plugin with `agy 1.1.2`.
+`/create-character` and `/novel-story-telling`. This remote installation was
+verified with `agy 1.1.7`.
+
+For local adapter development, Claude Code also accepts
+`/absolute/path/to/novelist` as a marketplace and Antigravity accepts
+`/absolute/path/to/novelist/plugins/novelist` as an install target.
 
 ### Create A Standalone Scaffold
 

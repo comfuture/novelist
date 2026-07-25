@@ -23,7 +23,7 @@ test("renders the Novelist landing page and installation path", async () => {
   assert.match(html, /Keep the whole novel in view/);
   assert.match(html, /codex plugin add novelist@openai-curated-remote/);
   assert.match(html, /claude plugin install novelist@novelist/);
-  assert.match(html, /agy plugin install \.\/plugins\/novelist/);
+  assert.match(html, /agy plugins install https:\/\/github\.com\/comfuture\/novelist/);
   assert.match(html, /create-scaffold\.sh/);
   assert.match(html, /worldbuilding, characters, materials, plots/);
   assert.doesNotMatch(html, /A Codex plugin for long-form fiction/);

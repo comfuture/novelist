@@ -28,7 +28,7 @@ Start a new Codex task after installation. Invoke skills as
 ### Claude Code
 
 ```bash
-claude plugin marketplace add /absolute/path/to/novelist
+claude plugin marketplace add comfuture/novelist
 claude plugin install novelist@novelist --scope user
 ```
 
@@ -38,13 +38,13 @@ Reload plugins or start a new session. Invoke skills as
 ### Antigravity CLI (`agy`)
 
 ```bash
-agy plugin install /absolute/path/to/novelist/plugins/novelist
+agy plugins install https://github.com/comfuture/novelist
 agy plugin list
 ```
 
 Invoke installed skills by their frontmatter name, such as
-`/create-character` or `/novel-story-telling`. This form was verified with a
-direct installation on `agy 1.1.2`.
+`/create-character` or `/novel-story-telling`. This public-repository
+installation was verified with `agy 1.1.7`.
 
 ## Included Skills
 

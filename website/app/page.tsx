@@ -82,7 +82,7 @@ claude plugin marketplace add comfuture/novelist
 claude plugin install novelist@novelist
 
 # Antigravity CLI
-agy plugin install ./plugins/novelist
+agy plugins install https://github.com/comfuture/novelist
 # Invoke /create-character
 
 # Standalone snapshot
