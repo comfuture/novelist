@@ -93,8 +93,7 @@ For outline review:
 ```bash
 python3 "<skill-dir>/scripts/inventory_review.py" \
   --project-root . \
-  --mode outline \
-  --output /tmp/analytical-review-inventory.json
+  --mode outline
 ```
 
 Add one or more `--target outlines/<file>.md` or `--target plot/<file>.md`
@@ -106,8 +105,7 @@ For chapter review:
 python3 "<skill-dir>/scripts/inventory_review.py" \
   --project-root . \
   --mode chapter \
-  --chapter <number> \
-  --output /tmp/analytical-review-inventory.json
+  --chapter <number>
 ```
 
 For manuscript review:
@@ -116,14 +114,16 @@ For manuscript review:
 python3 "<skill-dir>/scripts/inventory_review.py" \
   --project-root . \
   --mode manuscript \
-  --max-batch-tokens 12000 \
-  --output /tmp/analytical-review-inventory.json
+  --max-batch-tokens 12000
 ```
 
-The inventory stores relative paths, metadata, line ranges, hashes, estimates,
-and batches without copying prose. Stop short of a complete-coverage claim
-when `coverage_complete` is false. Do not omit a valid numbered chapter because
-it appears unlikely to produce feedback.
+The command prints relative paths, metadata, line ranges, hashes, estimates,
+and batches without copying prose. Prefer this non-persistent output. If an
+external file is explicitly needed, pass a fresh, non-existing `--output`
+path; the helper creates it exclusively with private permissions and refuses
+collisions. Stop short of a complete-coverage claim when `coverage_complete`
+is false. Do not omit a valid numbered chapter because it appears unlikely to
+produce feedback.
 
 ## 4. Build The Review Charter
 

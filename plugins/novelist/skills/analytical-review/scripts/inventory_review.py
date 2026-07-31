@@ -7,6 +7,7 @@ import argparse
 import ast
 import hashlib
 import json
+import os
 import re
 from dataclasses import dataclass
 from pathlib import Path
@@ -210,6 +211,34 @@ def select_paths(
         raise ValueError("outline mode does not accept --chapter")
     if mode == "manuscript" and (targets or chapter_numbers):
         raise ValueError("manuscript mode always inventories every numbered chapter")
+
+    if targets and mode == "outline":
+        allowed_directories = {
+            project_root / "plot",
+            project_root / "outlines",
+        }
+        invalid = [
+            path.relative_to(project_root).as_posix()
+            for path in paths
+            if path.parent not in allowed_directories
+        ]
+        if invalid:
+            raise ValueError(
+                "outline targets must be direct Markdown files under plot/ or outlines/: "
+                + ", ".join(invalid)
+            )
+    if targets and mode in {"chapter", "regression"}:
+        invalid = [
+            path.relative_to(project_root).as_posix()
+            for path in paths
+            if path.parent != project_root / "chapters"
+            or not CHAPTER_RE.fullmatch(path.name)
+        ]
+        if invalid:
+            raise ValueError(
+                f"{mode} targets must be numbered Markdown files under chapters/: "
+                + ", ".join(invalid)
+            )
 
     if chapter_numbers:
         wanted = set(chapter_numbers)
@@ -426,12 +455,24 @@ def main() -> None:
 
     rendered = json.dumps(inventory, ensure_ascii=False, indent=2) + "\n"
     if args.output:
-        output = Path(args.output).expanduser().resolve()
+        requested_output = Path(args.output).expanduser()
+        output_parent = requested_output.parent.resolve()
+        if not output_parent.is_dir():
+            raise SystemExit("--output parent must be an existing directory")
+        output = output_parent / requested_output.name
         project_root = Path(args.project_root).expanduser().resolve()
         if output == project_root or output.is_relative_to(project_root):
             raise SystemExit("--output must remain outside the reviewed project")
-        output.parent.mkdir(parents=True, exist_ok=True)
-        output.write_text(rendered, encoding="utf-8")
+        try:
+            descriptor = os.open(
+                output,
+                os.O_WRONLY | os.O_CREAT | os.O_EXCL,
+                0o600,
+            )
+        except FileExistsError as error:
+            raise SystemExit("--output must not already exist") from error
+        with os.fdopen(descriptor, "w", encoding="utf-8") as output_file:
+            output_file.write(rendered)
     else:
         print(rendered, end="")
 
