@@ -1,3 +1,23 @@
+# Novelist 0.2.0 — Analytical Review
+
+Novelist 0.2.0 expands the plugin to nine skills and
+standalone exports to eight project-operating skills.
+
+Highlights:
+
+- adds an independent, read-only-by-default analytical reviewer for outlines,
+  chapters, and complete manuscripts;
+- structures feedback as overall assessment, work examination, and line
+  editing or proofreading;
+- adds a bounded whole-manuscript review, finding-disposition, revision, and
+  regression-review loop only when the author delegates a fully autonomous
+  workflow from initial planning through publication;
+- preserves ordinary planning, drafting, revision, and publication routing
+  without silently adding literary review;
+- expands submission routing coverage to seven positive and six negative
+  reviewer scenarios;
+- keeps deterministic EPUB packaging separate from literary-quality judgment.
+
 # Novelist 0.1.1 — Agent-Neutral Plugin Packaging
 
 Novelist 0.1.1 keeps the installed plugin's eight-skill writing contract while

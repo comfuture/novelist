@@ -11,7 +11,7 @@ The repository root is not a novel workspace. The canonical plugin payload is
 
 ## Canonical Sources
 
-- `plugins/novelist/skills/`: all eight canonical plugin skills.
+- `plugins/novelist/skills/`: all nine canonical plugin skills.
 - `plugins/novelist/assets/scaffold/`: the canonical generated-workspace
   scaffold.
 - `plugins/novelist/.codex-plugin/plugin.json`: Codex adapter metadata.
@@ -52,7 +52,7 @@ runtime reads from the repository root, symlinks, or hardlinks. Preserve:
 - `AGENTS.md` plus the `CLAUDE.md` import bridge;
 - empty asset directories and generated-output ignore rules.
 
-Standalone exports contain the scaffold plus seven project-operating skills.
+Standalone exports contain the scaffold plus eight project-operating skills.
 The plugin-only `create-novel-project` initializer is intentionally excluded
 because the standalone exporter has already performed that operation.
 
@@ -66,6 +66,14 @@ EPUB publication remains an integrated final step, not the primary product
 definition. Writing and documentation should lead with structured story assets,
 continuity, reader-knowledge control, and genre-aware strategy.
 
+Analytical review is a separate, read-only-by-default reviewer workflow. Invoke
+it for an explicit outline, chapter, or manuscript review. Inject its bounded
+whole-manuscript review, finding-disposition, revision, and regression-review
+loop only when the author delegates a fully autonomous workflow from initial
+planning through publication. Ordinary planning, drafting, revision, and
+publication requests must keep their existing workflows and must not silently
+add analytical review.
+
 ## Validation
 
 Run focused tests first, then the complete relevant set:
@@ -73,6 +81,7 @@ Run focused tests first, then the complete relevant set:
 ```bash
 PYTHONDONTWRITEBYTECODE=1 python3 -m unittest discover -s tests
 PYTHONDONTWRITEBYTECODE=1 python3 -m unittest discover -s plugins/novelist/skills/create-novel-project/tests
+PYTHONDONTWRITEBYTECODE=1 python3 -m unittest discover -s plugins/novelist/skills/analytical-review/tests
 PYTHONDONTWRITEBYTECODE=1 python3 -m unittest discover -s plugins/novelist/skills/create-visual-asset/tests
 PYTHONDONTWRITEBYTECODE=1 python3 -m unittest discover -s plugins/novelist/skills/novel-story-telling/tests
 PYTHONDONTWRITEBYTECODE=1 python3 -m unittest discover -s plugins/novelist/skills/publish-novel/tests
@@ -103,7 +112,8 @@ details and EPUB examples.
 
 Use semantic versions consistently across host manifests. The `0.1.1`
 restructure changes clone-first scaffold usage but preserves the installed
-plugin's core skill contract.
+plugin's core skill contract. The `0.2.0` release adds analytical review as the
+ninth installed skill and the eighth standalone project-operating skill.
 
 Never commit credentials. Documentation may use `API_KEY` or
 `<PROVIDER>_API_KEY` placeholders only.

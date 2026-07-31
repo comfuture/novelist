@@ -1,0 +1,4 @@
+interface:
+  display_name: "Analytical Review"
+  short_description: "Review outlines and manuscripts with evidence"
+  default_prompt: "Use $analytical-review to critique this outline or manuscript without editing it."

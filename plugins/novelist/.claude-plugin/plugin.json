@@ -2,8 +2,8 @@
   "$schema": "https://json.schemastore.org/claude-code-plugin-manifest.json",
   "name": "novelist",
   "displayName": "Novelist",
-  "version": "0.1.1",
-  "description": "Manage story assets, apply genre-aware writing strategies, maintain continuity, and publish validated EPUBs.",
+  "version": "0.2.0",
+  "description": "Manage story assets, apply genre-aware writing strategies, review outlines and manuscripts, maintain continuity, and publish validated EPUBs.",
   "author": {
     "name": "Changkyun Kim",
     "email": "comfuture@gmail.com"

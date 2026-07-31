@@ -26,6 +26,9 @@ test("renders the Novelist landing page and installation path", async () => {
   assert.match(html, /agy plugins install https:\/\/github\.com\/comfuture\/novelist/);
   assert.match(html, /create-scaffold\.sh/);
   assert.match(html, /worldbuilding, characters, materials, plots/);
+  assert.match(html, /Nine focused workflows/);
+  assert.match(html, /Review analytically/);
+  assert.match(html, /only when you delegate the full journey/);
   assert.doesNotMatch(html, /A Codex plugin for long-form fiction/);
   assert.match(html, /Created by Changkyun Kim/);
   assert.doesNotMatch(html, /codex-preview|react-loading-skeleton/);
@@ -53,6 +56,16 @@ test("renders the breaking-layout migration note", async () => {
   assert.match(html, /Novelist 0\.1\.1/);
   assert.match(html, /clone-first scaffold users/);
   assert.match(html, /MIGRATION\.md/);
+});
+
+test("renders the analytical-review release boundary", async () => {
+  const response = await render("/releases");
+  assert.equal(response.status, 200);
+  const html = await response.text();
+  assert.match(html, /Novelist 0\.2\.0 — Analytical Review/);
+  assert.match(html, /Novelist 0\.2\.0 expands the plugin to nine skills/);
+  assert.match(html, /only to fully autonomous start-to-publication work/);
+  assert.match(html, /deterministic EPUB publication/);
 });
 
 test("ships real brand assets and removes the starter preview", async () => {

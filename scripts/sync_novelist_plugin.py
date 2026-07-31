@@ -13,6 +13,7 @@ PLUGIN_SKILLS_ROOT = PLUGIN_ROOT / "skills"
 SCAFFOLD_ROOT = PLUGIN_ROOT / "assets" / "scaffold"
 
 EXPECTED_SKILLS = {
+    "analytical-review",
     "create-character",
     "create-material",
     "create-novel-project",

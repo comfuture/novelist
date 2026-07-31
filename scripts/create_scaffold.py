@@ -16,6 +16,7 @@ PLUGIN_ROOT = REPOSITORY_ROOT / "plugins" / "novelist"
 SCAFFOLD_ROOT = PLUGIN_ROOT / "assets" / "scaffold"
 SKILLS_ROOT = PLUGIN_ROOT / "skills"
 STANDALONE_SKILLS = {
+    "analytical-review",
     "create-character",
     "create-material",
     "create-plot",
