@@ -20,7 +20,7 @@
   "skills": "./skills/",
   "interface": {
     "displayName": "Novelist",
-    "shortDescription": "Write coherent novels across every story asset",
+    "shortDescription": "Write continuity-safe novels",
     "longDescription": "Initialize a Markdown novel workspace, develop settings, characters, materials, plots, and outlines, apply genre-aware storytelling strategies, review outlines and manuscripts analytically, control continuity and reader understanding, create visual assets, and finish with a validated EPUB.",
     "developerName": "Changkyun Kim",
     "category": "Productivity",
@@ -33,9 +33,8 @@
     "termsOfServiceURL": "https://novelist.comfuture.chatgpt.site/terms",
     "defaultPrompt": [
       "Create a new novel workspace and help me define its premise.",
-      "Plan the next chapter with continuity and reader understanding in mind.",
-      "Review the current outline or manuscript analytically without editing it.",
-      "Publish the current manuscript as a validated EPUB."
+      "Plan or revise the next chapter with continuity and reader understanding in mind.",
+      "Review the current outline or manuscript analytically, then publish it as a validated EPUB."
     ],
     "brandColor": "#E85D3F",
     "composerIcon": "./assets/logo.png",
