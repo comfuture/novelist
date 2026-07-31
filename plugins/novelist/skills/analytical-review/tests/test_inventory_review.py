@@ -152,6 +152,28 @@ class ReviewInventoryTests(unittest.TestCase):
             self.assertTrue(all(unit["review_section"] == "document" for unit in result["units"]))
             self.assertFalse(any(unit["kind"] == "chapter" for unit in result["units"]))
 
+    def test_outline_mode_rejects_an_explicit_chapter_target(self) -> None:
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            write_chapter(
+                root / "chapters" / "001.existing-draft.md",
+                number=1,
+                title="Existing Draft",
+                draft="This chapter must not become outline evidence.",
+            )
+
+            with self.assertRaisesRegex(
+                ValueError,
+                "outline targets must be direct Markdown files under plot/ or outlines/",
+            ):
+                inventory_review.build_inventory(
+                    root,
+                    mode="outline",
+                    targets=["chapters/001.existing-draft.md"],
+                    chapter_numbers=[],
+                    max_batch_tokens=12000,
+                )
+
     def test_chapter_mode_requires_and_honors_an_explicit_scope(self) -> None:
         with tempfile.TemporaryDirectory() as directory:
             root = Path(directory)
@@ -216,6 +238,28 @@ class ReviewInventoryTests(unittest.TestCase):
                 max_batch_tokens=12000,
             )
             self.assertEqual([unit["number"] for unit in result["units"]], [1])
+
+    def test_chapter_mode_rejects_an_explicit_outline_target(self) -> None:
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            write_source(
+                root / "outlines" / "000.master-outline.md",
+                source_type="outline",
+                title="Master Outline",
+                body="## Sequence\n\nA planned change.",
+            )
+
+            with self.assertRaisesRegex(
+                ValueError,
+                "chapter targets must be numbered Markdown files under chapters/",
+            ):
+                inventory_review.build_inventory(
+                    root,
+                    mode="chapter",
+                    targets=["outlines/000.master-outline.md"],
+                    chapter_numbers=[],
+                    max_batch_tokens=12000,
+                )
 
     def test_malformed_draft_is_counted_but_not_marked_covered(self) -> None:
         with tempfile.TemporaryDirectory() as directory:
@@ -442,6 +486,72 @@ class ReviewInventoryTests(unittest.TestCase):
                     "--output must remain outside the reviewed project",
                 ):
                     inventory_review.main()
+
+    def test_cli_refuses_an_existing_or_symbolic_linked_output(self) -> None:
+        with tempfile.TemporaryDirectory() as directory:
+            temporary_root = Path(directory)
+            root = temporary_root / "project"
+            write_source(
+                root / "outlines" / "000.master-outline.md",
+                source_type="outline",
+                title="Master Outline",
+                body="## Sequence\n\nA planned change.",
+            )
+            protected = temporary_root / "protected.txt"
+            protected.write_text("do not overwrite", encoding="utf-8")
+            output = temporary_root / "inventory.json"
+            output.symlink_to(protected)
+
+            with mock.patch.object(
+                sys,
+                "argv",
+                [
+                    str(SCRIPT),
+                    "--project-root",
+                    str(root),
+                    "--mode",
+                    "outline",
+                    "--output",
+                    str(output),
+                ],
+            ):
+                with self.assertRaisesRegex(
+                    SystemExit,
+                    "--output must not already exist",
+                ):
+                    inventory_review.main()
+
+            self.assertEqual(protected.read_text(encoding="utf-8"), "do not overwrite")
+
+    def test_cli_creates_a_fresh_output_with_private_permissions(self) -> None:
+        with tempfile.TemporaryDirectory() as directory:
+            temporary_root = Path(directory)
+            root = temporary_root / "project"
+            write_source(
+                root / "outlines" / "000.master-outline.md",
+                source_type="outline",
+                title="Master Outline",
+                body="## Sequence\n\nA planned change.",
+            )
+            output = temporary_root / "inventory.json"
+
+            with mock.patch.object(
+                sys,
+                "argv",
+                [
+                    str(SCRIPT),
+                    "--project-root",
+                    str(root),
+                    "--mode",
+                    "outline",
+                    "--output",
+                    str(output),
+                ],
+            ):
+                inventory_review.main()
+
+            self.assertTrue(output.is_file())
+            self.assertEqual(output.stat().st_mode & 0o777, 0o600)
 
 
 if __name__ == "__main__":

@@ -75,13 +75,12 @@ Run the inventory helper and inspect every eligible numbered chapter:
 python3 "<skill-dir>/scripts/inventory_review.py" \
   --project-root . \
   --mode manuscript \
-  --max-batch-tokens 12000 \
-  --output /tmp/analytical-review-inventory.json
+  --max-batch-tokens 12000
 ```
 
-The inventory contains metadata, hashes, line ranges, token estimates, and
-batches, but no manuscript prose. Stop short of a complete-coverage claim when
-it reports an invalid or empty Draft.
+The printed inventory contains metadata, hashes, line ranges, token estimates,
+and batches, but no manuscript prose. Stop short of a complete-coverage claim
+when it reports an invalid or empty Draft.
 
 Review bounded units in filename order. Maintain a working coverage table,
 unit findings, strengths, open questions, and cross-unit evidence. Synthesize
