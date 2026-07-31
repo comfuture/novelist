@@ -2,7 +2,7 @@
 type: agent_instructions
 project: novel-project
 created: 2026-06-21
-updated: 2026-07-15
+updated: 2026-07-31
 ---
 # AGENTS.md
 
@@ -166,6 +166,32 @@ for characters, settings, plots, materials, storytelling, visual assets, or
 publication. Do not vendor a second `.agents/skills/` copy into the project
 unless the author explicitly asks for repository-local skill ownership.
 
+## Analytical Review Workflow
+
+Use the analytical-review skill when the author explicitly asks to review an
+outline, chapter, or manuscript. Review is read-only by default; do not change
+planning files, chapters, canon, or generated output unless the author
+separately authorizes selected revisions.
+
+Only a fully autonomous request covering the complete lifecycle from initial
+planning through publication automatically adds this bounded pre-publication
+loop:
+
+1. Inventory and review every publishable chapter.
+2. Record each material finding as `apply`, `defer`, or `reject` with a concise
+   rationale.
+3. Apply selected revisions through the storytelling skill and update canonical
+   state.
+4. Run one focused regression review for prior high-impact findings and
+   revision-introduced problems.
+5. Run strict structural and continuity checks, then delegate EPUB packaging to
+   the publication skill.
+
+Do not infer this autonomous workflow from an ordinary planning, drafting,
+revision, publish, export, build, regenerate, package, or validation request.
+Ordinary publication retains its existing deterministic preflight and packaging
+behavior without a literary-quality claim.
+
 ## Publishing Workflow
 
 The intended publishing flow is:
@@ -174,6 +200,12 @@ The intended publishing flow is:
 2. `chapters/*.md` are rendered in filename order.
 3. Rendered intermediate files are written to `published/`.
 4. The Novelist publication skill runs its bundled packaging script and validates the final `.epub` generated through staging under `published/`.
+
+An ordinary publication request begins with the publication skill's existing
+structural and continuity preflight. It does not automatically invoke
+analytical review. The separate review loop above applies only when explicitly
+requested or when the author delegates the fully autonomous
+start-to-publication lifecycle.
 
 Keep both generated forms: `published/epub/` is the inspectable staging tree,
 and `published/*.epub` is the ZIP-based container opened by reading software.

@@ -41,6 +41,22 @@
       "expectedBehavior": "Use publish-novel, run strict continuity checks, build from chapter Draft sections, and validate the final EPUB container.",
       "expectedResult": "published/epub plus a validated published/novel.epub, with editorial sections excluded.",
       "validation": "plugins/novelist/skills/publish-novel/tests/test_build_epub.py"
+    },
+    {
+      "id": "positive-6",
+      "title": "Review an outline without editing it",
+      "prompt": "Review this novel outline analytically before I start drafting. Diagnose the planned story direction, but do not change any source files.",
+      "expectedBehavior": "Use analytical-review in outline mode, build an intent-aware review charter, return the three localized review sections, limit line-level comments to the outline document itself, and remain read-only.",
+      "expectedResult": "An evidence-backed outline review that distinguishes observed structure, uncertainty, and suggested direction without inventing prose-level findings.",
+      "validation": "plugins/novelist/skills/analytical-review/tests/test_inventory_review.py"
+    },
+    {
+      "id": "positive-7",
+      "title": "Review before fully autonomous publication",
+      "prompt": "Take this novel from initial planning through a finished, published EPUB autonomously.",
+      "expectedBehavior": "Before deterministic EPUB packaging, use analytical-review to cover every publishable chapter, disposition material findings as apply, defer, or reject, revise selected findings through novel-story-telling, and run one bounded regression review.",
+      "expectedResult": "A completed autonomous workflow with an explicit review handoff and regression check before strict continuity validation and EPUB packaging.",
+      "validation": "plugins/novelist/skills/analytical-review/tests/test_inventory_review.py"
     }
   ],
   "negative": [
@@ -67,6 +83,30 @@
       "expectedBehavior": "Fail the strict audit and EPUB build, identify the structural errors, and require source correction before publishing.",
       "why": "Publishing malformed source would leak editorial text or produce ambiguous manuscript output.",
       "validation": "plugins/novelist/skills/publish-novel/tests/test_build_epub.py"
+    },
+    {
+      "id": "negative-4",
+      "title": "Do not infer review from ordinary publication",
+      "prompt": "Publish this existing manuscript as an EPUB.",
+      "expectedBehavior": "Use publish-novel directly with its existing structural and continuity preflight; do not inject analytical-review or claim that EPUB validation proves literary quality.",
+      "why": "An ordinary publication request does not authorize a separate literary-review workflow.",
+      "validation": "plugins/novelist/skills/analytical-review/tests/test_inventory_review.py"
+    },
+    {
+      "id": "negative-5",
+      "title": "Do not infer review from ordinary revision",
+      "prompt": "Revise chapter 4 to apply the continuity correction I already approved.",
+      "expectedBehavior": "Use the existing storytelling revision workflow for the authorized change without silently adding analytical-review.",
+      "why": "Ordinary planning, drafting, and revision requests keep their focused workflows unless the author explicitly requests review.",
+      "validation": "plugins/novelist/skills/analytical-review/tests/test_inventory_review.py"
+    },
+    {
+      "id": "negative-6",
+      "title": "Do not invent prose findings from an outline",
+      "prompt": "Review this outline and give detailed findings about its dialogue rhythm, sentence diction, and scene-level prose.",
+      "expectedBehavior": "Use analytical-review in outline mode, review outline clarity and story direction, and explicitly defer dialogue, diction, prose rhythm, and scene-level line editing until Draft text exists.",
+      "why": "Outline evidence cannot support claims about unwritten manuscript prose.",
+      "validation": "plugins/novelist/skills/analytical-review/tests/test_inventory_review.py"
     }
   ]
 }

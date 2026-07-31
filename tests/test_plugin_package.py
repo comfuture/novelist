@@ -41,10 +41,10 @@ class PluginPackageTests(unittest.TestCase):
             (PLUGIN_ROOT / "plugin.json").read_text(encoding="utf-8")
         )
 
-        self.assertEqual(codex["version"], "0.1.1")
-        self.assertEqual(claude["version"], "0.1.1")
-        self.assertEqual(claude_marketplace["version"], "0.1.1")
-        self.assertEqual(claude_marketplace["plugins"][0]["version"], "0.1.1")
+        self.assertEqual(codex["version"], "0.2.0")
+        self.assertEqual(claude["version"], "0.2.0")
+        self.assertEqual(claude_marketplace["version"], "0.2.0")
+        self.assertEqual(claude_marketplace["plugins"][0]["version"], "0.2.0")
         self.assertEqual(
             set(antigravity),
             {"$schema", "name", "description"},

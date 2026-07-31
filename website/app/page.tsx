@@ -5,6 +5,7 @@ const skills = [
   ["Gather materials", "Capture motifs, research, dialogue, and scene seeds."],
   ["Design the plot", "Build conflicts, reversals, reveals, and payoffs."],
   ["Control the story", "Plan chapters around reader understanding and continuity."],
+  ["Review analytically", "Critique outlines and manuscripts without editing source by default."],
   ["Create visuals", "Develop cover and illustration assets for the project."],
   ["Deliver the book", "Package approved Draft content as a validated EPUB."],
 ];
@@ -51,7 +52,7 @@ export default function Home() {
 
       <section className="section" id="workflows">
         <div className="sectionHeading">
-          <span>Eight focused workflows</span>
+          <span>Nine focused workflows</span>
           <h2>Build the story before delivering the book.</h2>
         </div>
         <div className="skillGrid">
@@ -70,7 +71,7 @@ export default function Home() {
           <span className="kicker">Codex · Claude Code · Antigravity CLI</span>
           <h2>Use the plugin in your agent.</h2>
           <p>
-            Install the shared eight-skill plugin, or create a standalone
+            Install the shared nine-skill plugin, or create a standalone
             workspace with repository-local skills.
           </p>
         </div>
@@ -98,6 +99,13 @@ sh scripts/create-scaffold.sh --destination ../my-novel --agent all`}</code></pr
           Novelist is open-source software provided under the MIT License. It
           does not claim ownership of work created with it. You remain
           responsible for reviewing, editing, and publishing your output.
+        </p>
+        <p>
+          Analytical review runs when you request it. Novelist adds the complete
+          review, finding-disposition, revision, and regression-review loop
+          automatically only when you delegate the full journey from initial
+          planning through publication. Ordinary writing and publication
+          requests keep their focused workflows.
         </p>
       </section>
 

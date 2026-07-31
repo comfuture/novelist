@@ -5,14 +5,14 @@
     "name": "Changkyun Kim",
     "email": "comfuture@gmail.com"
   },
-  "description": "Agent-assisted workflows for planning and writing continuity-safe Markdown novels.",
-  "version": "0.1.1",
+  "description": "Agent-assisted workflows for planning, reviewing, and writing continuity-safe Markdown novels.",
+  "version": "0.2.0",
   "plugins": [
     {
       "name": "novelist",
       "source": "./plugins/novelist",
-      "description": "Manage story assets, apply genre-aware writing strategies, maintain continuity, and publish validated EPUBs.",
-      "version": "0.1.1",
+      "description": "Manage story assets, apply genre-aware writing strategies, review outlines and manuscripts, maintain continuity, and publish validated EPUBs.",
+      "version": "0.2.0",
       "author": {
         "name": "Changkyun Kim",
         "email": "comfuture@gmail.com"

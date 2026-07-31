@@ -9,6 +9,21 @@ export default function ReleasesPage() {
       <h1>Release Notes</h1>
       <p className="updated">Public release history</p>
       <article>
+        <span className="kicker">Current release</span>
+        <h2>Novelist 0.2.0 — Analytical Review</h2>
+        <p>
+          Novelist 0.2.0 expands the plugin to nine skills with independent,
+          evidence-backed outline and manuscript critique.
+        </p>
+        <ul>
+          <li>Reviews outlines, chapters, and complete manuscripts without editing source by default.</li>
+          <li>Organizes feedback into overall assessment, work examination, and line editing or proofreading.</li>
+          <li>Includes the new review skill in eight-skill standalone workspace exports.</li>
+          <li>Adds a bounded review, finding-disposition, revision, and regression-review loop only to fully autonomous start-to-publication work.</li>
+          <li>Preserves ordinary planning, drafting, revision, and deterministic EPUB publication without silently adding literary review.</li>
+        </ul>
+      </article>
+      <article>
         <span className="kicker">Agent-neutral source release</span>
         <h2>Novelist 0.1.1</h2>
         <p>

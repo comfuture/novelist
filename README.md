@@ -4,7 +4,8 @@ Novelist is an agent-assisted novel-writing plugin for managing interconnected
 Markdown assets and turning them into a coherent long-form story. It helps
 authors develop worldbuilding, characters, materials, MacGuffins, plots,
 outlines, style, chapters, continuity, and reader knowledge while applying
-genre-specific storytelling strategies.
+genre-specific storytelling strategies and providing independent analytical
+review when requested.
 
 Validated EPUB publication is the final integrated delivery step, not the
 plugin's primary purpose.
@@ -64,7 +65,7 @@ For local adapter development, Claude Code also accepts
 ### Create A Standalone Scaffold
 
 Use this compatibility path when you do not want to install a plugin. The
-exported workspace contains the canonical scaffold and seven repository-local
+exported workspace contains the canonical scaffold and eight repository-local
 writing skills. It is a snapshot and does not receive future plugin updates
 automatically.
 
@@ -102,6 +103,8 @@ used directly as an authored novel workspace.
 - Build bounded context for a chapter and check structural plus semantic
   continuity.
 - Track reader knowledge, reveal timing, active threads, and chapter state.
+- Review an outline, chapter, or complete manuscript through an independent,
+  evidence-backed analytical reviewer without editing source by default.
 - Apply focused strategies for general story flow, wuxia, science fiction,
   time travel and loops, mystery, drama, and romantic entanglement.
 - Create guarded chapter files without overwriting an existing chapter number.
@@ -120,8 +123,20 @@ used directly as an authored novel workspace.
 | `create-material` | Capture motifs, objects, clues, research, dialogue seeds, and scene seeds. |
 | `create-plot` | Build the central plot and supporting threads. |
 | `novel-story-telling` | Control causality, escalation, reveals, continuity, and chapter handoffs. |
+| `analytical-review` | Review outlines and manuscripts through overall, work-level, and line-level analysis. |
 | `create-visual-asset` | Build style-locked prompts and create assets through an available raster provider. |
 | `publish-novel` | Render approved Draft content and validate the final EPUB. |
+
+## Review And Publication Routing
+
+Novelist keeps analytical review separate from ordinary writing and packaging:
+
+| Request | Analytical review behavior |
+| --- | --- |
+| Explicit outline, chapter, or manuscript review | Run `analytical-review` for the requested scope and remain read-only unless revision is separately authorized. |
+| Fully autonomous writing from initial planning through publication | Before packaging, review every publishable chapter, disposition material findings as `apply`, `defer`, or `reject`, revise selected findings through `novel-story-telling`, and run one bounded regression review. |
+| Ordinary planning, drafting, or revision | Use the requested writing workflow without silently adding analytical review. |
+| Ordinary publish, export, build, regenerate, package, or validation | Preserve `publish-novel` structural and continuity preflight followed by deterministic EPUB packaging; do not infer a literary-review request. |
 
 ## Typical Writing Flow
 
@@ -134,8 +149,15 @@ used directly as an authored novel workspace.
 6. Resolve continuity questions, approve the chapter contract, and write the
    guarded Draft.
 7. Update newly established canon and reader-knowledge state.
-8. Create optional visual assets through an available raster provider.
-9. Publish the completed manuscript as a validated EPUB.
+8. When the author explicitly requests critique, run the analytical reviewer
+   on the requested outline, chapter, or manuscript scope.
+9. Create optional visual assets through an available raster provider.
+10. Publish the completed manuscript as a validated EPUB.
+
+For a fully autonomous start-to-publication request, step 8 becomes a required
+whole-manuscript review, finding-disposition, revision, and bounded
+regression-review loop. It is not automatically added to ordinary writing or
+publication requests.
 
 ## Repository Layout
 
@@ -162,6 +184,7 @@ Validate the canonical payload and host adapters:
 python3 scripts/sync_novelist_plugin.py --check
 PYTHONDONTWRITEBYTECODE=1 python3 -m unittest discover -s tests
 PYTHONDONTWRITEBYTECODE=1 python3 -m unittest discover -s plugins/novelist/skills/create-novel-project/tests
+PYTHONDONTWRITEBYTECODE=1 python3 -m unittest discover -s plugins/novelist/skills/analytical-review/tests
 PYTHONDONTWRITEBYTECODE=1 python3 -m unittest discover -s plugins/novelist/skills/create-visual-asset/tests
 PYTHONDONTWRITEBYTECODE=1 python3 -m unittest discover -s plugins/novelist/skills/novel-story-telling/tests
 PYTHONDONTWRITEBYTECODE=1 python3 -m unittest discover -s plugins/novelist/skills/publish-novel/tests

@@ -43,10 +43,10 @@ def main() -> None:
     for key in ("composerIcon", "logo"):
         require((PLUGIN / interface[key]).is_file(), f"missing asset: {interface[key]}")
 
-    require(len(cases["positive"]) == 5, "submission requires exactly five positive cases")
-    require(len(cases["negative"]) == 3, "submission requires exactly three negative cases")
+    require(len(cases["positive"]) == 7, "submission requires exactly seven positive cases")
+    require(len(cases["negative"]) == 6, "submission requires exactly six negative cases")
     all_cases = cases["positive"] + cases["negative"]
-    require(len({case["id"] for case in all_cases}) == 8, "test case IDs must be unique")
+    require(len({case["id"] for case in all_cases}) == 13, "test case IDs must be unique")
     for case in all_cases:
         for key in ("prompt", "expectedBehavior", "validation"):
             require(bool(case.get(key)), f"{case['id']} is missing {key}")
@@ -55,13 +55,14 @@ def main() -> None:
     run(sys.executable, "scripts/sync_novelist_plugin.py", "--check")
     for tests in (
         "plugins/novelist/skills/create-novel-project/tests",
+        "plugins/novelist/skills/analytical-review/tests",
         "plugins/novelist/skills/create-visual-asset/tests",
         "plugins/novelist/skills/novel-story-telling/tests",
         "plugins/novelist/skills/publish-novel/tests",
     ):
         run(sys.executable, "-m", "unittest", "discover", "-s", tests, "-p", "test_*.py")
 
-    print("Novelist public-submission payload is valid (5 positive, 3 negative).")
+    print("Novelist public-submission payload is valid (7 positive, 6 negative).")
 
 
 if __name__ == "__main__":

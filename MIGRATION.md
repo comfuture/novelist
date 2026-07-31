@@ -1,9 +1,9 @@
 # Migrating To Novelist 0.1.1
 
-Novelist 0.1.1 makes the installable plugin the canonical distribution. This is
+Novelist 0.1.1 made the installable plugin the canonical distribution. This is
 a breaking layout change for people who cloned the repository and wrote a novel
-directly in its root. The installed plugin's eight-skill workflow remains
-compatible.
+directly in its root. The current installed plugin provides nine skills while
+preserving the same source and workspace compatibility.
 
 ## If You Already Install The Plugin
 
@@ -48,9 +48,9 @@ scripts\create-scaffold.bat --destination ..\my-novel --agent all
 
 Modes:
 
-- `codex`: scaffold plus seven skills under `.agents/skills/`
-- `claude`: scaffold plus seven skills under `.claude/skills/`
-- `antigravity`: scaffold plus seven skills under `.agents/skills/`
+- `codex`: scaffold plus eight skills under `.agents/skills/`
+- `claude`: scaffold plus eight skills under `.claude/skills/`
+- `antigravity`: scaffold plus eight skills under `.agents/skills/`
 - `all`: scaffold plus both local skill layouts
 
 Codex and Antigravity share the open `.agents/skills/` layout. Claude Code uses

@@ -23,6 +23,7 @@ jobs:
           PYTHONDONTWRITEBYTECODE: "1"
         run: |
           python -m unittest discover -s plugins/novelist/skills/create-novel-project/tests
+          python -m unittest discover -s plugins/novelist/skills/analytical-review/tests
           python -m unittest discover -s plugins/novelist/skills/create-visual-asset/tests
           python -m unittest discover -s plugins/novelist/skills/novel-story-telling/tests
           python -m unittest discover -s plugins/novelist/skills/publish-novel/tests

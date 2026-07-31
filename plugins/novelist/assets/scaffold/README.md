@@ -24,11 +24,28 @@ The available writing skills are:
 - `create-material`
 - `create-plot`
 - `novel-story-telling`
+- `analytical-review`
 - `create-visual-asset`
 - `publish-novel`
 
 Plugin-created workspaces use installed skills. Standalone exports contain
 repository-local copies under `.agents/skills/`, `.claude/skills/`, or both.
+
+## Review And Publication Routing
+
+- For an explicit outline, chapter, or manuscript review, use
+  `analytical-review`. It returns evidence-backed findings and does not edit
+  source by default.
+- For a fully autonomous request that delegates the complete novel lifecycle
+  from initial planning through publication, review every publishable chapter,
+  disposition material findings as `apply`, `defer`, or `reject`, revise
+  selected findings through `novel-story-telling`, and run a bounded regression
+  review before packaging.
+- For ordinary planning, drafting, or revision, use the requested writing skill
+  without silently adding analytical review.
+- For an ordinary publish, export, build, regenerate, package, or validation
+  request, use `publish-novel` directly. Its structural and continuity
+  preflight remains separate from literary review.
 
 ## Source Structure
 
@@ -62,9 +79,14 @@ frontmatter.
 7. Create the guarded `chapters/NNN.lowercase-ascii-slug.md` file and validate
    its required `Synopsis`, `Draft`, and `Revision Notes` structure.
 8. Update canonical facts and the reviewed story ledger after acceptance.
-9. Create optional visual assets through a raster provider actually available
+9. When explicitly requested, review the relevant outline, chapter, or complete
+   manuscript without editing it by default.
+10. Create optional visual assets through a raster provider actually available
    to the current agent.
-10. Publish only approved chapter Draft content as a validated EPUB.
+11. Publish only approved chapter Draft content as a validated EPUB.
+
+Only a fully autonomous start-to-publication request turns step 9 into the
+required whole-manuscript review and revision loop described above.
 
 ## Visual Capability
 

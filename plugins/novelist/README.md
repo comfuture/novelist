@@ -2,8 +2,9 @@
 
 Novelist manages interconnected Markdown story assets and applies
 genre-specific writing strategies so an agent can help an author write a
-coherent long-form novel. EPUB packaging remains the final integrated delivery
-step.
+coherent long-form novel. It can also review outlines and manuscripts
+analytically without editing them by default. EPUB packaging remains the final
+integrated delivery step.
 
 ## Install
 
@@ -54,8 +55,16 @@ installation was verified with `agy 1.1.7`.
 - `create-material`
 - `create-plot`
 - `novel-story-telling`
+- `analytical-review`
 - `create-visual-asset`
 - `publish-novel`
+
+Use `analytical-review` when the author explicitly requests an outline,
+chapter, or manuscript review. It is read-only by default. A fully autonomous
+request covering initial planning through publication adds a bounded
+whole-manuscript review, finding-disposition, revision, and regression-review
+loop before EPUB packaging. Ordinary planning, drafting, revision, and
+publication requests do not silently add this review workflow.
 
 The initializer copies only `assets/scaffold/`. Installed plugin skills remain
 in the host's plugin cache and are not duplicated inside the generated novel.
@@ -69,7 +78,7 @@ claim that an image exists.
 
 Users who do not want to install a plugin can run the repository's
 `scripts/create-scaffold.sh`, `.ps1`, or `.bat` wrapper. Standalone export
-includes the scaffold and seven project-operating skills; the plugin-only
+includes the scaffold and eight project-operating skills; the plugin-only
 initializer is intentionally omitted. See the root `README.md` and
 `MIGRATION.md`.
 
@@ -80,6 +89,7 @@ files are maintained here directly.
 
 ```bash
 python3 scripts/sync_novelist_plugin.py --check
+PYTHONDONTWRITEBYTECODE=1 python3 -m unittest discover -s plugins/novelist/skills/analytical-review/tests
 claude plugin validate plugins/novelist --strict
 agy plugin validate plugins/novelist
 ```

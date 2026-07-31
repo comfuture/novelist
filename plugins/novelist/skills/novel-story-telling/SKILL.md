@@ -24,6 +24,29 @@ Preserve names, honorifics, invented terms, and spelling from canonical files. D
 
 Resolve conflicts by authority: explicit author direction > `final` source > `revision` source > latest manuscript fact > `draft` source > outline or seed. Report unresolved conflicts; do not silently choose or invent canon.
 
+## Analytical Review Routing Boundary
+
+Keep analytical review separate from ordinary planning, drafting, and revision.
+Do not invoke `analytical-review` unless the author explicitly requests
+critique/review or explicitly delegates the complete autonomous novel lifecycle
+from initial planning through publication.
+
+For that fully autonomous start-to-publication request only, after all chapters
+are drafted and before calling `publish-novel`:
+
+1. run whole-manuscript `analytical-review`;
+2. record each material finding as `apply`, `defer`, or `reject` with a concise
+   rationale;
+3. apply selected findings through this storytelling workflow and update canon;
+4. run one bounded analytical regression review;
+5. complete strict continuity validation;
+6. call `publish-novel` for deterministic packaging.
+
+An ordinary request to finish remaining chapters, revise known material, or
+publish an existing manuscript does not by itself authorize this loop. If the
+author explicitly asks for review and revision together, keep diagnosis and
+application distinct and preserve finding IDs through the handoff.
+
 ## Core Workflow
 
 ### 1. Orient

@@ -23,6 +23,14 @@ the staging tree, but publication must not delete it after packaging.
 
 Interpret `publish` as local EPUB generation only. Do not upload, distribute, email, release, or submit the book to a storefront or external service unless the author explicitly requests that separate action.
 
+Do not invoke `analytical-review` merely because the author asks to publish,
+export, build, regenerate, package, or validate an existing novel. Ordinary
+publication retains the structural and continuity preflight below. When a
+fully autonomous start-to-publication workflow was explicitly authorized, the
+orchestrating storytelling workflow must complete analytical review,
+finding disposition, revision, and bounded regression review before handing
+the manuscript to this skill. Keep literary judgment out of `build_epub.py`.
+
 ## Workflow
 
 ### 1. Read Publication Context
